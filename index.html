@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#a021a6">
 <title>Reconexão Materna — Autoteste</title>
 <meta name="description" content="Descubra qual das 3 camadas do seu corpo precisa ser reconectada depois da gestação.">
+<link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
@@ -32,7 +33,8 @@
   .screen{animation:fade .35s ease both;padding-top:8px}
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-  .cover-img{width:186px;height:186px;object-fit:cover;border-radius:24px;display:block;margin:14px auto 18px;box-shadow:0 12px 30px rgba(160,33,166,.18)}
+  .brand{width:148px;display:block;margin:2px auto -4px}
+  .cover-img{width:172px;height:172px;object-fit:cover;border-radius:24px;display:block;margin:8px auto 18px;box-shadow:0 12px 30px rgba(160,33,166,.18)}
   .eyebrow{display:inline-block;background:#141414;color:#fff;font-weight:800;font-size:14px;padding:5px 10px;border-radius:5px;margin:0 auto 10px}
   .center{text-align:center}
   h2.q{font-size:23px;font-weight:800;line-height:1.25;text-align:center;margin:6px 0 22px}
@@ -66,8 +68,10 @@
   .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .cards.one{grid-template-columns:1fr}
   .card{border:1.5px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;background:#fff;transition:all .15s}
-  .card .ph{height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  .card .ph{height:182px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;overflow:hidden;
        background:linear-gradient(160deg,#f3e6f8,#e7d2ef);color:#a86bbb}
+  .cards.one .ph{height:220px}
+  .card .ph img{width:100%;height:100%;object-fit:cover;display:block}
   .card .ph svg{width:46px;height:46px;opacity:.75}
   .card .ph small{font-size:11px;letter-spacing:.4px;text-transform:uppercase;opacity:.7}
   .card .cl{display:flex;align-items:center;gap:10px;padding:13px;font-size:14px;color:#2a2a2e;line-height:1.3}
@@ -110,6 +114,7 @@
   /* diagnosis */
   .warn{display:block;text-align:center;background:#fff4f4;color:#c0392b;font-weight:900;font-size:14px;padding:9px;border-radius:10px;margin-bottom:4px;letter-spacing:.3px}
   .warnsub{text-align:center;color:#9a9aa0;font-size:12px;margin-bottom:16px}
+  .diag-img{width:100%;max-width:340px;display:block;margin:6px auto 18px;border-radius:16px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
   .figure{display:flex;justify-content:center;margin:6px 0 18px}
   .layers{display:flex;flex-direction:column;gap:10px;margin:6px 0 18px}
   .layer{display:flex;align-items:center;gap:13px;border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;background:#fff}
@@ -155,7 +160,7 @@ const PV_URL = "#"; // << TROCAR pela URL da sua Página de Vendas do Reconexão
 const S = [
   {id:'tempo', type:'cover', eyebrow:'Para começarmos, me conte:',
    q:'Quanto tempo já se passou desde a sua última gestação?',
-   img:'assets/autora-capa.png',
+   img:'assets/autora-capa.jpg',
    intro:'Autoteste rápido pra mães que já tentaram de tudo. No final: <b>sua leitura de reconexão personalizada, grátis.</b>',
    opts:['Menos de 1 ano','1 a 5 anos','5 a 10 anos','Mais de 10 anos'],
    info:'Faça esse teste pra ter uma leitura específica pro seu caso. Ao final você ganha seu diagnóstico grátis.',
@@ -169,11 +174,14 @@ const S = [
    after:'Cada parto deixa uma marca diferente no corpo — por isso sua leitura é personalizada.'},
 
   {id:'tipoBarriga', type:'cards', q:'Qual dessas mais parece com a sua barriga hoje?',
-   opts:['Barriga Caída / Avental','Barriga Estufada','Barriga Pochete','Barriga Estômago Alto']},
+   opts:[{t:'Barriga Caída / Avental', img:'assets/barriga-caida.jpg'},
+         {t:'Barriga Estufada', img:'assets/barriga-estufada.jpg'},
+         {t:'Barriga Pochete', img:'assets/barriga-pochete.jpg'},
+         {t:'Barriga Estômago Alto', img:'assets/barriga-estomago-alto.jpg'}]},
 
   {id:'peso', type:'cards', q:'Qual das duas te descreve melhor hoje?', cols:1,
-   opts:[{t:'Já voltei ao meu peso, mas a barriga não voltou', v:'peso_ok'},
-         {t:'Além da barriga, também preciso emagrecer', v:'emagrecer'}]},
+   opts:[{t:'Já voltei ao meu peso, mas a barriga não voltou', v:'peso_ok', img:'assets/peso-ok.jpg'},
+         {t:'Além da barriga, também preciso emagrecer', v:'emagrecer', img:'assets/peso-emagrecer.jpg'}]},
 
   {id:'kg', type:'single', q:'Quanto você gostaria de eliminar pra se sentir bem?',
    opts:['1 a 5 kg','6 a 10 kg','11 a 20 kg','Mais de 20 kg'],
@@ -269,6 +277,8 @@ function render(){
 
 /* ---- cover ---- */
 function rCover(s, box){
+  const brand=document.createElement('img'); brand.className='brand'; brand.src='assets/logo.png'; brand.alt='Reconexão Materna';
+  box.appendChild(brand);
   const img=document.createElement('img'); img.className='cover-img'; img.src=s.img; img.alt='';
   box.appendChild(img);
   const eb=document.createElement('div'); eb.className='eyebrow'; eb.textContent=s.eyebrow;
@@ -317,7 +327,8 @@ function rCards(s, box){
   s.opts.forEach(o=>{
     const label=typeof o==='string'?o:o.t; const val=typeof o==='string'?o:(o.v||o.t);
     const c=document.createElement('div'); c.className='card';
-    c.innerHTML='<div class="ph">'+bodySVG+'<small>sua imagem aqui</small></div>';
+    c.innerHTML = o.img ? '<div class="ph"><img src="'+o.img+'" alt="" loading="lazy"></div>'
+                        : '<div class="ph">'+bodySVG+'<small>sua imagem aqui</small></div>';
     const cl=document.createElement('div'); cl.className='cl';
     const rc=document.createElement('span'); rc.className='rc'; cl.appendChild(rc);
     const tx=document.createElement('span'); tx.textContent=label; cl.appendChild(tx);
@@ -400,21 +411,8 @@ function rDiag(s, box){
   const cesarea = A.parto==='Cesárea'||A.parto==='Os dois';
 
   box.innerHTML='<div class="warn">⚠️ SUA LEITURA DE RECONEXÃO ⚠️</div>'
-    +'<div class="warnsub">leitura de bem-estar baseada nas suas respostas — não é diagnóstico médico</div>';
-
-  const layers=[
-    {n:'1',t:'Respiração',d:'a base — reconecta o diafragma',key:'base'},
-    {n:'2',t:'Core profundo',d:'transverso + assoalho pélvico',key:'core2'},
-    {n:'3',t:'Postura',d:'sai do "padrão da gestação"',key:'postura'},
-  ];
-  const hotKey = camada==='assoalho'?'core2':(camada==='postura'?'postura':'core2');
-  const wrap=document.createElement('div'); wrap.className='layers';
-  layers.forEach(l=>{
-    const d=document.createElement('div'); d.className='layer'+(l.key===hotKey?' hot':'');
-    d.innerHTML='<div class="n">'+l.n+'</div><div><div class="t">'+l.t+'</div><div class="d">'+l.d+'</div></div>';
-    wrap.appendChild(d);
-  });
-  box.appendChild(wrap);
+    +'<div class="warnsub">leitura de bem-estar baseada nas suas respostas — não é diagnóstico médico</div>'
+    +'<img class="diag-img" src="assets/diagnostico.jpg" alt="" loading="lazy">';
 
   let camTxt='';
   if(camada==='assoalho') camTxt='No seu caso, a camada que mais pede atenção é o <b>assoalho pélvico</b> — é o que está por trás do escape de xixi e do desconforto que você marcou.';
@@ -424,8 +422,9 @@ function rDiag(s, box){
   if(desincha) camTxt+=' E tem um eixo de <b>desinchar</b> (intestino e retenção) que já dá pra destravar nos primeiros dias.';
 
   const dt=document.createElement('div'); dt.className='dtext';
-  dt.innerHTML='<span class="big">Não é gordura. E não é falta de força de vontade.</span>'
-    +'Suas respostas apontam um padrão comum em quem teve filhos: as <b>3 camadas</b> que sustentam a sua barriga desconectaram durante a gestação — e ninguém te ensinou a religá-las na ordem certa.'
+  dt.innerHTML='<span class="big">A questão nunca foi força de vontade.</span>'
+    +'Suas respostas apontam um conjunto de alterações que a gestação deixou — <b>diástase abdominal</b>, <b>enfraquecimento do assoalho pélvico</b> e <b>acúmulo de gordura na barriga</b>.'
+    +'<br><br>A raiz de tudo isso? As <b>3 camadas</b> que sustentam a sua barriga — respiração, core profundo e postura — <b>desconectaram</b> durante a gestação, e ninguém te ensinou a religá-las na ordem certa.'
     +'<br><br>'+camTxt;
   box.appendChild(dt);
 
@@ -441,7 +440,7 @@ function rDiag(s, box){
 
 /* ---- transition ---- */
 function rTrans(s, box){
-  const img=document.createElement('img'); img.className='tr-img'; img.src='assets/autora-guia.png'; img.alt=''; box.appendChild(img);
+  const img=document.createElement('img'); img.className='tr-img'; img.src='assets/autora-guia.jpg'; img.alt=''; box.appendChild(img);
   const lead=document.createElement('div'); lead.className='tr-lead'; lead.textContent='Não é força de vontade que falta. É reconexão — na ordem certa.'; box.appendChild(lead);
   const body=document.createElement('div'); body.className='tr-body';
   body.innerHTML='Reunimos isso no <b>Método Reconexão Materna: as 3 Camadas</b> — respiração, core profundo e postura em <b>10 minutos por dia</b>, em casa, do jeito <b>seguro pra quem teve filho</b>.';
