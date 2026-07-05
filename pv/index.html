@@ -311,5 +311,17 @@
   </div>
 </footer>
 
+<script src="../track.js"></script>
+<script>
+  if(window.rmTrack){
+    rmTrack.view('pv');
+    document.querySelectorAll('a.cta, a.cta.alt, a.anchor-btn').forEach(function(a){
+      var href = a.getAttribute('href') || '';
+      var label = (a.textContent || '').trim().replace(/\s+/g,' ').slice(0,50);
+      if(href.charAt(0) === '#'){ a.addEventListener('click', function(){ rmTrack.click('oferta', label); }); }
+      else { a.addEventListener('click', function(){ rmTrack.checkout(label); }); }
+    });
+  }
+</script>
 </body>
 </html>

@@ -157,6 +157,7 @@
   <div id="root"></div>
 </div>
 
+<script src="track.js"></script>
 <script>
 /* ====== CONFIG ====== */
 const PV_URL = "pv/"; // Página de Vendas do Reconexão Materna
@@ -254,10 +255,30 @@ const A = {};           // answers
 let idx = 0;
 const hist = [];
 
+/* ---- tracking do funil (envia pro GAS via track.js) ---- */
+const isQType = s => ['cover','single','cards','multi'].includes(s.type);
+const QSTEP = {}; let _qn = 0;
+S.forEach((s,i)=>{ if(isQType(s)){ _qn++; QSTEP[i]=_qn; } });
+const QUIZ_LAST = _qn;                 // nº da última pergunta (= quiz concluído)
+let _rmT0 = Date.now();                // cronômetro por tela (ms de resposta)
+function trackView(i){
+  const s = S[i]; if(!window.rmTrack) return;
+  if(s.type==='diagnosis') return rmTrack.view('diagnostico');
+  if(s.type==='transition') return rmTrack.view('transition');
+  if(!isQType(s)) return;
+  if(i===0) rmTrack.view(0);           // visitante (abriu o quiz)
+  rmTrack.view(QSTEP[i]);              // viu a pergunta N
+}
+function trackAnswer(i){
+  const s = S[i]; if(!window.rmTrack || !isQType(s)) return;
+  let v = A[s.id]; if(Array.isArray(v)) v = v.join(', ');
+  rmTrack.answer(QSTEP[i], v==null?'':String(v), Date.now()-_rmT0);
+}
+
 const bodySVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="5" r="2.6"/><path d="M7 21c0-4 1.2-7 5-7s5 3 5 7"/><path d="M9 12c0 0 1.2 1.2 3 1.2S15 12 15 12"/></svg>';
 
 const visible = i => { const s=S[i]; return !s.showIf || s.showIf(A); };
-function next(){ let i=idx+1; while(i<S.length && !visible(i)) i++; hist.push(idx); idx=i; render(); }
+function next(){ trackAnswer(idx); let i=idx+1; while(i<S.length && !visible(i)) i++; hist.push(idx); idx=i; render(); }
 function back(){ if(hist.length){ idx=hist.pop(); render(); } }
 backBtn.onclick = back;
 
@@ -280,6 +301,7 @@ function render(){
   box.className = 'screen';
   ({cover:rCover,single:rSingle,cards:rCards,multi:rMulti,loading:rLoading,proof:rProof,diagnosis:rDiag,transition:rTrans})[s.type](s, box);
   root.innerHTML=''; root.appendChild(box);
+  _rmT0 = Date.now(); trackView(idx);
 }
 
 /* ---- cover ---- */
@@ -466,7 +488,7 @@ function rTrans(s, box){
   box.appendChild(feat);
   const pl=document.createElement('div'); pl.className='proofline'; pl.innerHTML='Mais de <b>40 mil mães</b> já começaram essa reconexão.'; box.appendChild(pl);
   const b=document.createElement('button'); b.className='cta'; b.textContent='SIM, QUERO VER MINHA SOLUÇÃO →';
-  b.onclick=()=>{ if(PV_URL && PV_URL!=='#'){ window.location.href=PV_URL; } else { b.textContent='➡️ Configure a URL da Página de Vendas'; } };
+  b.onclick=()=>{ if(window.rmTrack) rmTrack.click('cta_pv','SIM, QUERO VER MINHA SOLUÇÃO', Date.now()-_rmT0); if(PV_URL && PV_URL!=='#'){ window.location.href=PV_URL; } else { b.textContent='➡️ Configure a URL da Página de Vendas'; } };
   box.appendChild(b);
   const comp=document.createElement('div'); comp.className='comp'; comp.textContent='Movimento de bem-estar e reconexão, não prescrição. Pare se sentir dor ou desconforto. Cada corpo e cada parto são únicos — resultados variam.'; box.appendChild(comp);
 }
