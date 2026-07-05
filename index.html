@@ -25,7 +25,9 @@
   .app{width:100%;max-width:468px;padding:0 20px 60px;position:relative}
 
   /* progress */
-  .top{position:sticky;top:0;background:#fff;padding:16px 0 8px;z-index:10;display:flex;align-items:center;gap:10px}
+  .logohdr{text-align:center;padding:16px 0 2px}
+  .logohdr img{height:74px;width:auto;display:inline-block}
+  .top{position:sticky;top:0;background:#fff;padding:10px 0 8px;z-index:10;display:flex;align-items:center;gap:10px}
   .prog{flex:1;height:9px;background:var(--track);border-radius:999px;overflow:hidden}
   .prog>i{display:block;height:100%;width:6%;background:var(--grad);border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
   .back{flex:none;border:0;background:none;font-size:24px;color:#555;cursor:pointer;padding:0 2px;line-height:1;visibility:hidden}
@@ -145,6 +147,7 @@
 </head>
 <body>
 <div class="app">
+  <div class="logohdr"><img src="assets/logo.png" alt="Reconexão Materna"></div>
   <div class="top">
     <button class="back" id="back" aria-label="Voltar">←</button>
     <div class="prog"><i id="progbar"></i></div>
@@ -277,8 +280,6 @@ function render(){
 
 /* ---- cover ---- */
 function rCover(s, box){
-  const brand=document.createElement('img'); brand.className='brand'; brand.src='assets/logo.png'; brand.alt='Reconexão Materna';
-  box.appendChild(brand);
   const img=document.createElement('img'); img.className='cover-img'; img.src=s.img; img.alt='';
   box.appendChild(img);
   const eb=document.createElement('div'); eb.className='eyebrow'; eb.textContent=s.eyebrow;
