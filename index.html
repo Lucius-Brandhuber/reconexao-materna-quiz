@@ -103,6 +103,8 @@
   /* proof */
   .sub{text-align:center;color:#333;font-size:15px;line-height:1.5;margin:-10px 0 16px}
   .carousel{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .ctrack{display:flex;transition:transform .5s ease}
+  .cimg{width:100%;height:262px;flex:none;object-fit:cover;display:block;background:#111}
   .ba{height:280px;display:flex}
   .ba>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:800;color:#8a8a90}
   .ba .before{background:#eceined;background:#edeef0}
@@ -199,6 +201,7 @@ const S = [
 
   {type:'proof', q:'Sua meta é mais possível do que parece — e sem treino pesado.',
    sub:'Mais de <b>40 mil mães</b> já começaram essa reconexão em casa — em 10 minutos por dia.',
+   imgs:['assets/antes-depois-1.jpg','assets/antes-depois-2.jpg','assets/antes-depois-3.jpg'],
    curio:'Na próxima etapa você vai entender por que nada funcionou até agora. 👇',
    cta:'CONTINUAR MINHA LEITURA →'},
 
@@ -270,6 +273,7 @@ function setProgress(){
 
 function render(){
   window.scrollTo(0,0);
+  if(window._carIv){clearInterval(window._carIv);window._carIv=null;}
   const s = S[idx];
   setProgress();
   const box = document.createElement('div');
@@ -387,11 +391,19 @@ function rProof(s, box){
   const h=document.createElement('h2'); h.className='q'; h.textContent=s.q; box.appendChild(h);
   const sub=document.createElement('p'); sub.className='sub'; sub.innerHTML=s.sub; box.appendChild(sub);
   const car=document.createElement('div'); car.className='carousel';
-  car.innerHTML='<div class="ba"><div class="before" style="background:#edeef0;color:#8a8a90"><small>ANTES</small>'+bodySVG+'</div>'
-    +'<div class="after"><small>DEPOIS</small>'+bodySVG+'</div></div>'
-    +'<div class="carcap">Resultados reais de mães · adicione suas fotos aqui</div>';
+  const track=document.createElement('div'); track.className='ctrack';
+  s.imgs.forEach(src=>{ const im=document.createElement('img'); im.className='cimg'; im.src=src; im.alt=''; im.loading='lazy'; track.appendChild(im); });
+  car.appendChild(track);
+  const cap=document.createElement('div'); cap.className='carcap'; cap.textContent='Resultados reais de mães que reconectaram o corpo';
+  car.appendChild(cap);
   box.appendChild(car);
-  const d=document.createElement('div'); d.className='dots'; d.innerHTML='<span class="on"></span><span></span><span></span>'; box.appendChild(d);
+  const d=document.createElement('div'); d.className='dots';
+  s.imgs.forEach((_,i)=>{ const sp=document.createElement('span'); if(i===0) sp.className='on'; d.appendChild(sp); });
+  box.appendChild(d);
+  let ci=0; const cn=s.imgs.length;
+  const show=i=>{ track.style.transform='translateX('+(-i*100)+'%)'; [...d.children].forEach((el,k)=>el.classList.toggle('on',k===i)); };
+  [...d.children].forEach((el,i)=>el.onclick=()=>{ ci=i; show(ci); });
+  window._carIv=setInterval(()=>{ ci=(ci+1)%cn; show(ci); },2600);
   const cur=document.createElement('p'); cur.className='sub'; cur.style.margin='4px 0 14px'; cur.innerHTML='<b>'+s.curio+'</b>'; box.appendChild(cur);
   const b=document.createElement('button'); b.className='cta'; b.textContent=s.cta; b.onclick=next; box.appendChild(b);
   const cp=document.createElement('div'); cp.className='note'; cp.textContent='Cada corpo e cada parto são únicos — resultados variam.'; box.appendChild(cp);
