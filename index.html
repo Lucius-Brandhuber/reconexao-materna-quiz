@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#a021a6">
+<title>Reconexão Materna — Autoteste</title>
+<meta name="description" content="Descubra qual das 3 camadas do seu corpo precisa ser reconectada depois da gestação.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#a021a6; --purple-d:#8d1a9b; --purple-l:#b23cc0;
+    --grad:linear-gradient(160deg,#b23cc0 0%,#8d1a9b 100%);
+    --lav:#f7ebfb; --lav-b:#d9a3e6; --track:#f3e3f7;
+    --ink:#1c1c1e; --muted:#6b6b70; --line:#eadff0;
+    --terra:#c06a45;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:#fff}
+  body{font-family:'Nunito',system-ui,-apple-system,sans-serif;color:var(--ink);
+       display:flex;justify-content:center;min-height:100vh}
+  .app{width:100%;max-width:468px;padding:0 20px 60px;position:relative}
+
+  /* progress */
+  .top{position:sticky;top:0;background:#fff;padding:16px 0 8px;z-index:10}
+  .prog{height:9px;background:var(--track);border-radius:999px;overflow:hidden}
+  .prog>i{display:block;height:100%;width:6%;background:var(--grad);border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+  .back{position:absolute;left:0;top:14px;border:0;background:none;font-size:22px;color:#333;cursor:pointer;padding:6px;display:none;line-height:1}
+
+  .screen{animation:fade .35s ease both;padding-top:8px}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .cover-img{width:186px;height:186px;object-fit:cover;border-radius:24px;display:block;margin:14px auto 18px;box-shadow:0 12px 30px rgba(160,33,166,.18)}
+  .eyebrow{display:inline-block;background:#141414;color:#fff;font-weight:800;font-size:14px;padding:5px 10px;border-radius:5px;margin:0 auto 10px}
+  .center{text-align:center}
+  h2.q{font-size:23px;font-weight:800;line-height:1.25;text-align:center;margin:6px 0 22px}
+  .intro{text-align:center;color:var(--muted);font-size:15px;margin:-10px 0 18px;line-height:1.5}
+
+  /* gradient options (cover) */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .gopt{display:flex;align-items:center;gap:11px;background:var(--grad);color:#fff;border:0;
+        border-radius:16px;padding:17px 15px;font:inherit;font-weight:700;font-size:15px;text-align:left;cursor:pointer;
+        box-shadow:0 6px 16px rgba(160,33,166,.22);transition:transform .12s,filter .12s}
+  .gopt:active{transform:scale(.97)}
+  .gopt .ring{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.75);flex:none}
+  .gopt.sel{filter:brightness(1.08)}
+  .gopt.sel .ring{background:#fff;box-shadow:inset 0 0 0 4px var(--purple)}
+
+  /* list options */
+  .opt{display:flex;align-items:center;gap:12px;background:var(--lav);border:1.5px solid var(--lav-b);
+       border-radius:14px;padding:15px 16px;margin-bottom:12px;cursor:pointer;transition:all .15s;font-size:15px;color:#2a2a2e}
+  .opt:active{transform:scale(.99)}
+  .opt .badge{flex:none;min-width:27px;height:27px;display:flex;align-items:center;justify-content:center;
+       border:1.5px solid var(--purple-l);border-radius:7px;color:var(--purple);font-weight:800;font-size:13px;background:#fff}
+  .opt .rc{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--lav-b);background:#fff}
+  .opt b{font-weight:800}
+  .opt .sub{color:inherit;opacity:.8;font-weight:400}
+  .opt.sel{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(160,33,166,.22)}
+  .opt.sel .badge{background:#fff}
+  .opt.sel .rc{background:#fff;box-shadow:inset 0 0 0 5px var(--purple)}
+  .opt.sel .sub{opacity:.92}
+
+  /* image cards */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .cards.one{grid-template-columns:1fr}
+  .card{border:1.5px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;background:#fff;transition:all .15s}
+  .card .ph{height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+       background:linear-gradient(160deg,#f3e6f8,#e7d2ef);color:#a86bbb}
+  .card .ph svg{width:46px;height:46px;opacity:.75}
+  .card .ph small{font-size:11px;letter-spacing:.4px;text-transform:uppercase;opacity:.7}
+  .card .cl{display:flex;align-items:center;gap:10px;padding:13px;font-size:14px;color:#2a2a2e;line-height:1.3}
+  .card .cl .rc{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--lav-b);background:#fff}
+  .card.sel{border-color:var(--purple-l);box-shadow:0 8px 20px rgba(160,33,166,.18)}
+  .card.sel .cl{background:var(--lav)}
+  .card.sel .cl .rc{background:var(--purple);box-shadow:inset 0 0 0 4px #fff}
+
+  /* buttons */
+  .cta,.cont{display:block;width:100%;border:0;border-radius:16px;padding:18px;font:inherit;font-weight:800;font-size:16px;
+       background:var(--grad);color:#fff;cursor:pointer;box-shadow:0 8px 20px rgba(160,33,166,.28);margin-top:8px;transition:opacity .2s,transform .12s}
+  .cta:active,.cont:active{transform:scale(.99)}
+  .cont[disabled]{opacity:.4;box-shadow:none;cursor:not-allowed}
+
+  .infobox{background:#f4f4f6;border-radius:14px;padding:14px 16px;text-align:center;color:#4a4a4f;font-size:13.5px;font-weight:700;line-height:1.45;margin-top:16px}
+  .tempo{text-align:center;font-size:13.5px;color:#333;margin-top:16px}
+  .tempo b{color:#111}
+  .note{text-align:center;font-size:12.5px;color:#9a9aa0;margin-top:14px;font-style:italic}
+
+  /* loading */
+  .loading{min-height:64vh;display:flex;flex-direction:column;justify-content:center}
+  .lrow{display:flex;justify-content:space-between;font-weight:800;font-size:16px;margin-bottom:8px}
+  .ltrack{height:12px;background:#ededed;border-radius:999px;overflow:hidden}
+  .ltrack>i{display:block;height:100%;width:0;background:var(--purple);border-radius:999px;transition:width 1.9s linear}
+  .lcap{text-align:center;color:#333;font-size:16px;margin-top:16px;line-height:1.4}
+
+  /* proof */
+  .sub{text-align:center;color:#333;font-size:15px;line-height:1.5;margin:-10px 0 16px}
+  .carousel{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .ba{height:280px;display:flex}
+  .ba>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:800;color:#8a8a90}
+  .ba .before{background:#eceined;background:#edeef0}
+  .ba .after{background:linear-gradient(160deg,#f3e6f8,#e3cdec);color:#9a5bb0}
+  .ba small{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:.8}
+  .carcap{text-align:center;padding:14px;font-weight:700;color:#333;font-size:14px;border-top:1px solid var(--line)}
+  .dots{display:flex;gap:7px;justify-content:center;margin:14px 0}
+  .dots span{width:8px;height:8px;border-radius:50%;background:#dcd0e4}
+  .dots span.on{background:var(--purple)}
+
+  /* diagnosis */
+  .warn{display:block;text-align:center;background:#fff4f4;color:#c0392b;font-weight:900;font-size:14px;padding:9px;border-radius:10px;margin-bottom:4px;letter-spacing:.3px}
+  .warnsub{text-align:center;color:#9a9aa0;font-size:12px;margin-bottom:16px}
+  .figure{display:flex;justify-content:center;margin:6px 0 18px}
+  .layers{display:flex;flex-direction:column;gap:10px;margin:6px 0 18px}
+  .layer{display:flex;align-items:center;gap:13px;border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;background:#fff}
+  .layer .n{flex:none;width:30px;height:30px;border-radius:9px;background:var(--lav);color:var(--purple);font-weight:900;display:flex;align-items:center;justify-content:center}
+  .layer .t{font-weight:800;font-size:15px}
+  .layer .d{font-size:12.5px;color:var(--muted)}
+  .layer.hot{border-color:var(--terra);background:#fbf1ec;box-shadow:0 6px 16px rgba(192,106,69,.14)}
+  .layer.hot .n{background:var(--terra);color:#fff}
+  .dtext{font-size:15px;line-height:1.6;color:#2a2a2e}
+  .dtext b{color:#111}
+  .dtext .big{font-weight:900;font-size:17px;display:block;margin-bottom:8px}
+  .dbullets{list-style:none;padding:0;margin:14px 0}
+  .dbullets li{padding:7px 0;padding-left:26px;position:relative;font-size:14.5px}
+  .dbullets li:before{content:"✅";position:absolute;left:0}
+  .calm{text-align:center;font-weight:800;color:var(--purple);margin:16px 0 12px;font-size:15px}
+
+  /* transition */
+  .tr-img{width:100%;max-width:320px;border-radius:20px;display:block;margin:6px auto 18px;box-shadow:0 12px 30px rgba(160,33,166,.16)}
+  .tr-lead{font-size:20px;font-weight:900;text-align:center;line-height:1.3;margin-bottom:12px}
+  .tr-body{font-size:15px;line-height:1.6;color:#2a2a2e}
+  .tr-body b{color:#111}
+  .feat{list-style:none;padding:0;margin:16px 0}
+  .feat li{padding:8px 0;font-size:14.5px;display:flex;gap:10px;align-items:flex-start}
+  .feat li span{flex:none}
+  .comp{background:#f7f4f9;border-left:3px solid var(--lav-b);border-radius:8px;padding:11px 13px;font-size:12px;color:#7a7a80;line-height:1.5;margin:14px 0}
+  .proofline{text-align:center;font-weight:800;color:#333;margin:14px 0;font-size:15px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <button class="back" id="back" aria-label="Voltar">←</button>
+    <div class="prog"><i id="progbar"></i></div>
+  </div>
+  <div id="root"></div>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+const PV_URL = "#"; // << TROCAR pela URL da sua Página de Vendas do Reconexão Materna
+
+/* ====== QUIZ DATA ====== */
+const S = [
+  {id:'tempo', type:'cover', eyebrow:'Para começarmos, me conte:',
+   q:'Quanto tempo já se passou desde a sua última gestação?',
+   img:'assets/autora-capa.png',
+   intro:'Autoteste rápido pra mães que já tentaram de tudo. No final: <b>sua leitura de reconexão personalizada, grátis.</b>',
+   opts:['Menos de 1 ano','1 a 5 anos','5 a 10 anos','Mais de 10 anos'],
+   info:'Faça esse teste pra ter uma leitura específica pro seu caso. Ao final você ganha seu diagnóstico grátis.',
+   tempo:'menos de 2 minutos'},
+
+  {id:'filhos', type:'single', q:'Quantos filhos você teve?',
+   opts:['1 filho','2 filhos','3 ou mais']},
+
+  {id:'parto', type:'single', q:'Como foram os seus partos?',
+   opts:['Parto(s) normal','Cesárea','Os dois'],
+   after:'Cada parto deixa uma marca diferente no corpo — por isso sua leitura é personalizada.'},
+
+  {id:'tipoBarriga', type:'cards', q:'Qual dessas mais parece com a sua barriga hoje?',
+   opts:['Barriga Caída / Avental','Barriga Estufada','Barriga Pochete','Barriga Estômago Alto']},
+
+  {id:'peso', type:'cards', q:'Qual das duas te descreve melhor hoje?', cols:1,
+   opts:[{t:'Já voltei ao meu peso, mas a barriga não voltou', v:'peso_ok'},
+         {t:'Além da barriga, também preciso emagrecer', v:'emagrecer'}]},
+
+  {id:'kg', type:'single', q:'Quanto você gostaria de eliminar pra se sentir bem?',
+   opts:['1 a 5 kg','6 a 10 kg','11 a 20 kg','Mais de 20 kg'],
+   showIf:a=>a.peso==='emagrecer'},
+
+  {id:'flacidez', type:'single', q:'Olhando pra sua barriga, como você classifica a flacidez?',
+   opts:[{t:'POUCO', s:'quase não aparece, não me incomoda'},
+         {t:'MÉDIO', s:'aparece, mas não é exagerado'},
+         {t:'MUITO', s:'tem bastante e me incomoda todo dia'}]},
+
+  {type:'loading', cap:'Analisando suas respostas...'},
+
+  {type:'proof', q:'Sua meta é mais possível do que parece — e sem treino pesado.',
+   sub:'Mais de <b>40 mil mães</b> já começaram essa reconexão em casa — em 10 minutos por dia.',
+   curio:'Na próxima etapa você vai entender por que nada funcionou até agora. 👇',
+   cta:'CONTINUAR MINHA LEITURA →'},
+
+  {id:'sintomas', type:'multi', q:'Você sente algum desses no dia a dia?',
+   opts:['Escape de xixi ao tossir, rir, espirrar ou pular','Dor ou desconforto na relação','Dores nas costas','Baixa energia / cansaço constante','Nenhum desses'],
+   none:'Nenhum desses',
+   note:'Leitura de bem-estar do seu corpo — não é diagnóstico médico.'},
+
+  {id:'rotina', type:'multi', q:'E sobre a barriga em si, o que acontece com você?',
+   opts:['Um "vão" ou afastamento no meio quando sento/levanto','Abdômen sem firmeza, sem sustentação','Barriga que incha e marca na roupa no fim do dia','Intestino preso / dificuldade de ir ao banheiro','Nenhum desses'],
+   none:'Nenhum desses'},
+
+  {id:'frequencia', type:'single', q:'Com que frequência isso atrapalha o seu dia (roupa, foto, disposição, autoestima)?',
+   opts:['O tempo todo','Quase todo dia','Algumas vezes na semana','De vez em quando']},
+
+  {id:'emocional', type:'single', q:'Quando você se olha no espelho ou tira uma foto, o que passa na sua cabeça?',
+   opts:['Evito me olhar / me escondo nas fotos','Fico frustrada, não me reconheço','Tento aceitar, mas me incomoda','Estou de bem, só quero me sentir mais forte']},
+
+  {id:'jatentou', type:'multi', q:'O que você já tentou — e não funcionou como queria?',
+   opts:['Dieta / reeducação alimentar','Academia / musculação','Abdominais em casa','Cinta modeladora','Chás / detox / desincha','Ainda não tentei nada estruturado'],
+   none:'Ainda não tentei nada estruturado'},
+
+  {id:'sabotadores', type:'single', q:'O que mais te impediu de continuar até aqui?',
+   opts:['Falta de tempo (rotina + filhos)','Cansaço, sem energia pra me cuidar','Medo de fazer errado e piorar','Ansiedade / ficar beliscando','Falta de constância / sem apoio','Nenhum desses']},
+
+  {id:'desejo', type:'multi', q:'Se você reconectasse seu corpo, o que mais queria voltar a fazer?',
+   opts:['Vestir aquela roupa guardada no armário','Tirar foto sem prender a barriga','Pegar meu filho no colo sem dor nas costas','Rir, espirrar e pular sem medo de escapar xixi','Me olhar no espelho e me reconhecer de novo']},
+
+  {id:'metatempo', type:'single', q:'Em quanto tempo você gostaria de já sentir a barriga desinchar?',
+   opts:['Essa semana já','Em 7 dias','Em 1 mês','Não tenho pressa, quero é constância']},
+
+  {id:'ponte', type:'single', plain:true,
+   q:'Você gostaria de reconectar tudo isso com um método feito pra quem teve filho — 10 minutos por dia, em casa, respeitando o seu corpo?',
+   opts:['Sim, é exatamente o que eu preciso','Quero muito, mas tenho medo de fazer errado']},
+
+  {type:'loading', cap:'De acordo com suas respostas, estamos criando o seu diagnóstico...'},
+
+  {type:'diagnosis'},
+
+  {type:'loading', cap:'Carregando a melhor solução para você...'},
+
+  {type:'transition'},
+];
+
+/* ====== ENGINE ====== */
+const root = document.getElementById('root');
+const progbar = document.getElementById('progbar');
+const backBtn = document.getElementById('back');
+const A = {};           // answers
+let idx = 0;
+const hist = [];
+
+const bodySVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="5" r="2.6"/><path d="M7 21c0-4 1.2-7 5-7s5 3 5 7"/><path d="M9 12c0 0 1.2 1.2 3 1.2S15 12 15 12"/></svg>';
+
+const visible = i => { const s=S[i]; return !s.showIf || s.showIf(A); };
+function next(){ let i=idx+1; while(i<S.length && !visible(i)) i++; hist.push(idx); idx=i; render(); }
+function back(){ if(hist.length){ idx=hist.pop(); render(); } }
+backBtn.onclick = back;
+
+function setProgress(){
+  const isQ = s => ['cover','single','cards','multi'].includes(s.type);
+  const total = S.filter((s,i)=>isQ(s)&&visible(i)).length;
+  let passed=0; for(let i=0;i<=idx;i++) if(isQ(S[i])&&visible(i)) passed++;
+  const t=S[idx].type;
+  let pct = (t==='diagnosis'||t==='transition') ? 100 : Math.max(6, Math.round(passed/total*100));
+  progbar.style.width = pct+'%';
+  backBtn.style.display = (idx>0 && t!=='loading') ? 'block' : 'none';
+}
+
+function render(){
+  window.scrollTo(0,0);
+  const s = S[idx];
+  setProgress();
+  const box = document.createElement('div');
+  box.className = 'screen';
+  ({cover:rCover,single:rSingle,cards:rCards,multi:rMulti,loading:rLoading,proof:rProof,diagnosis:rDiag,transition:rTrans})[s.type](s, box);
+  root.innerHTML=''; root.appendChild(box);
+}
+
+/* ---- cover ---- */
+function rCover(s, box){
+  const img=document.createElement('img'); img.className='cover-img'; img.src=s.img; img.alt='';
+  box.appendChild(img);
+  const eb=document.createElement('div'); eb.className='eyebrow'; eb.textContent=s.eyebrow;
+  const ebw=document.createElement('div'); ebw.className='center'; ebw.appendChild(eb); box.appendChild(ebw);
+  const h=document.createElement('h2'); h.className='q'; h.textContent=s.q; box.appendChild(h);
+  if(s.intro){const p=document.createElement('p');p.className='intro';p.innerHTML=s.intro;box.appendChild(p);}
+  const g=document.createElement('div'); g.className='grid2';
+  s.opts.forEach(o=>{
+    const b=document.createElement('button'); b.className='gopt';
+    const r=document.createElement('span'); r.className='ring'; b.appendChild(r);
+    const t=document.createElement('span'); t.textContent=o; b.appendChild(t);
+    b.onclick=()=>{A[s.id]=o; b.classList.add('sel'); setTimeout(next,240);};
+    g.appendChild(b);
+  });
+  box.appendChild(g);
+  const info=document.createElement('div'); info.className='infobox'; info.textContent=s.info; box.appendChild(info);
+  const tm=document.createElement('div'); tm.className='tempo'; tm.innerHTML='✅ TEMPO ESTIMADO: <b>'+s.tempo+'</b> · Sua leitura é gratuita'; box.appendChild(tm);
+}
+
+/* ---- single ---- */
+function rSingle(s, box){
+  const h=document.createElement('h2'); h.className='q'; h.textContent=s.q; box.appendChild(h);
+  s.opts.forEach((o,i)=>{
+    const label = typeof o==='string'?o:(o.t||o.label);
+    const val = typeof o==='string'?o:(o.v||o.t||o.label);
+    const row=document.createElement('div'); row.className='opt';
+    if(s.plain){
+      const rc=document.createElement('span'); rc.className='rc'; row.appendChild(rc);
+    }else{
+      const bd=document.createElement('span'); bd.className='badge'; bd.textContent=String.fromCharCode(65+i); row.appendChild(bd);
+    }
+    const tx=document.createElement('div');
+    if(typeof o!=='string' && o.s){ tx.innerHTML='<b>'+o.t+'</b> <span class="sub">('+o.s+')</span>'; }
+    else tx.textContent=label;
+    row.appendChild(tx);
+    row.onclick=()=>{A[s.id]=val; row.classList.add('sel'); setTimeout(next,240);};
+    box.appendChild(row);
+  });
+  if(s.after){const n=document.createElement('div');n.className='note';n.textContent=s.after;box.appendChild(n);}
+}
+
+/* ---- image cards ---- */
+function rCards(s, box){
+  const h=document.createElement('h2'); h.className='q'; h.textContent=s.q; box.appendChild(h);
+  const wrap=document.createElement('div'); wrap.className='cards'+(s.cols===1?' one':'');
+  s.opts.forEach(o=>{
+    const label=typeof o==='string'?o:o.t; const val=typeof o==='string'?o:(o.v||o.t);
+    const c=document.createElement('div'); c.className='card';
+    c.innerHTML='<div class="ph">'+bodySVG+'<small>sua imagem aqui</small></div>';
+    const cl=document.createElement('div'); cl.className='cl';
+    const rc=document.createElement('span'); rc.className='rc'; cl.appendChild(rc);
+    const tx=document.createElement('span'); tx.textContent=label; cl.appendChild(tx);
+    c.appendChild(cl);
+    c.onclick=()=>{A[s.id]=val; c.classList.add('sel'); setTimeout(next,260);};
+    wrap.appendChild(c);
+  });
+  box.appendChild(wrap);
+}
+
+/* ---- multi ---- */
+function rMulti(s, box){
+  const h=document.createElement('h2'); h.className='q'; h.textContent=s.q; box.appendChild(h);
+  const chosen=new Set();
+  const rows=[];
+  s.opts.forEach((o,i)=>{
+    const row=document.createElement('div'); row.className='opt';
+    const bd=document.createElement('span'); bd.className='badge'; bd.textContent=String.fromCharCode(65+i); row.appendChild(bd);
+    const tx=document.createElement('div'); tx.textContent=o; row.appendChild(tx);
+    row.onclick=()=>{
+      const isNone = s.none && o===s.none;
+      if(isNone){ chosen.clear(); rows.forEach(r=>r.classList.remove('sel')); chosen.add(o); row.classList.add('sel'); }
+      else{
+        if(s.none){ // unselect the "none" option if picking a real one
+          const ni=s.opts.indexOf(s.none); if(ni>-1){chosen.delete(s.none); rows[ni].classList.remove('sel');}
+        }
+        if(chosen.has(o)){chosen.delete(o);row.classList.remove('sel');}else{chosen.add(o);row.classList.add('sel');}
+      }
+      cont.disabled = chosen.size===0;
+    };
+    rows.push(row); box.appendChild(row);
+  });
+  if(s.note){const n=document.createElement('div');n.className='note';n.textContent=s.note;box.appendChild(n);}
+  const cont=document.createElement('button'); cont.className='cont'; cont.textContent='Continuar'; cont.disabled=true;
+  cont.onclick=()=>{A[s.id]=[...chosen]; next();};
+  box.appendChild(cont);
+}
+
+/* ---- loading ---- */
+function rLoading(s, box){
+  const w=document.createElement('div'); w.className='loading';
+  const row=document.createElement('div'); row.className='lrow';
+  const l=document.createElement('span'); l.textContent='Carregando...'; const p=document.createElement('span'); p.textContent='0%';
+  row.appendChild(l); row.appendChild(p);
+  const tr=document.createElement('div'); tr.className='ltrack'; const fill=document.createElement('i'); tr.appendChild(fill);
+  const cap=document.createElement('div'); cap.className='lcap'; cap.textContent=s.cap;
+  w.appendChild(row); w.appendChild(tr); w.appendChild(cap); box.appendChild(w);
+  requestAnimationFrame(()=>{ fill.style.width='100%'; });
+  let n=0; const iv=setInterval(()=>{ n=Math.min(100,n+4); p.textContent=n+'%'; if(n>=100)clearInterval(iv); },72);
+  setTimeout(next, 2100);
+}
+
+/* ---- proof ---- */
+function rProof(s, box){
+  const h=document.createElement('h2'); h.className='q'; h.textContent=s.q; box.appendChild(h);
+  const sub=document.createElement('p'); sub.className='sub'; sub.innerHTML=s.sub; box.appendChild(sub);
+  const car=document.createElement('div'); car.className='carousel';
+  car.innerHTML='<div class="ba"><div class="before" style="background:#edeef0;color:#8a8a90"><small>ANTES</small>'+bodySVG+'</div>'
+    +'<div class="after"><small>DEPOIS</small>'+bodySVG+'</div></div>'
+    +'<div class="carcap">Resultados reais de mães · adicione suas fotos aqui</div>';
+  box.appendChild(car);
+  const d=document.createElement('div'); d.className='dots'; d.innerHTML='<span class="on"></span><span></span><span></span>'; box.appendChild(d);
+  const cur=document.createElement('p'); cur.className='sub'; cur.style.margin='4px 0 14px'; cur.innerHTML='<b>'+s.curio+'</b>'; box.appendChild(cur);
+  const b=document.createElement('button'); b.className='cta'; b.textContent=s.cta; b.onclick=next; box.appendChild(b);
+  const cp=document.createElement('div'); cp.className='note'; cp.textContent='Cada corpo e cada parto são únicos — resultados variam.'; box.appendChild(cp);
+}
+
+/* ---- diagnosis ---- */
+function pickCamada(){
+  const s=A.sintomas||[], r=A.rotina||[];
+  if(s.includes('Escape de xixi ao tossir, rir, espirrar ou pular')||s.includes('Dor ou desconforto na relação')) return 'assoalho';
+  if(r.includes('Um "vão" ou afastamento no meio quando sento/levanto')||r.includes('Abdômen sem firmeza, sem sustentação')) return 'core';
+  if(s.includes('Dores nas costas')) return 'postura';
+  return 'core';
+}
+function rDiag(s, box){
+  const camada=pickCamada();
+  const r=A.rotina||[];
+  const desincha = r.includes('Barriga que incha e marca na roupa no fim do dia')||r.includes('Intestino preso / dificuldade de ir ao banheiro');
+  const cesarea = A.parto==='Cesárea'||A.parto==='Os dois';
+
+  box.innerHTML='<div class="warn">⚠️ SUA LEITURA DE RECONEXÃO ⚠️</div>'
+    +'<div class="warnsub">leitura de bem-estar baseada nas suas respostas — não é diagnóstico médico</div>';
+
+  const layers=[
+    {n:'1',t:'Respiração',d:'a base — reconecta o diafragma',key:'base'},
+    {n:'2',t:'Core profundo',d:'transverso + assoalho pélvico',key:'core2'},
+    {n:'3',t:'Postura',d:'sai do "padrão da gestação"',key:'postura'},
+  ];
+  const hotKey = camada==='assoalho'?'core2':(camada==='postura'?'postura':'core2');
+  const wrap=document.createElement('div'); wrap.className='layers';
+  layers.forEach(l=>{
+    const d=document.createElement('div'); d.className='layer'+(l.key===hotKey?' hot':'');
+    d.innerHTML='<div class="n">'+l.n+'</div><div><div class="t">'+l.t+'</div><div class="d">'+l.d+'</div></div>';
+    wrap.appendChild(d);
+  });
+  box.appendChild(wrap);
+
+  let camTxt='';
+  if(camada==='assoalho') camTxt='No seu caso, a camada que mais pede atenção é o <b>assoalho pélvico</b> — é o que está por trás do escape de xixi e do desconforto que você marcou.';
+  else if(camada==='postura') camTxt='No seu caso, a <b>postura</b> entrou no "padrão da gestação" e puxou o resto do corpo junto — daí as dores e a barriga que insiste em ficar.';
+  else camTxt='No seu caso, a camada que mais pede atenção é o <b>core profundo (transverso)</b> — é o que faz a barriga projetar e some com a sustentação, mesmo você estando no peso.';
+  if(cesarea) camTxt+=' Depois de uma cesárea, esse core profundo costuma pedir uma reconexão ainda mais cuidadosa.';
+  if(desincha) camTxt+=' E tem um eixo de <b>desinchar</b> (intestino e retenção) que já dá pra destravar nos primeiros dias.';
+
+  const dt=document.createElement('div'); dt.className='dtext';
+  dt.innerHTML='<span class="big">Não é gordura. E não é falta de força de vontade.</span>'
+    +'Suas respostas apontam um padrão comum em quem teve filhos: as <b>3 camadas</b> que sustentam a sua barriga desconectaram durante a gestação — e ninguém te ensinou a religá-las na ordem certa.'
+    +'<br><br>'+camTxt;
+  box.appendChild(dt);
+
+  const ul=document.createElement('ul'); ul.className='dbullets';
+  ul.innerHTML='<li>Dieta e academia não religam essas camadas</li>'
+    +'<li>Abdominal comum, com afastamento, pode até acentuar</li>'
+    +'<li>Faltava a ordem certa: respiração → core profundo → postura</li>';
+  box.appendChild(ul);
+
+  const calm=document.createElement('div'); calm.className='calm'; calm.textContent='👇 Mas calma: isso tem um caminho — e ele é simples.'; box.appendChild(calm);
+  const b=document.createElement('button'); b.className='cta'; b.textContent='CONTINUAR PARA MINHA SOLUÇÃO'; b.onclick=next; box.appendChild(b);
+}
+
+/* ---- transition ---- */
+function rTrans(s, box){
+  const img=document.createElement('img'); img.className='tr-img'; img.src='assets/autora-guia.png'; img.alt=''; box.appendChild(img);
+  const lead=document.createElement('div'); lead.className='tr-lead'; lead.textContent='Não é força de vontade que falta. É reconexão — na ordem certa.'; box.appendChild(lead);
+  const body=document.createElement('div'); body.className='tr-body';
+  body.innerHTML='Reunimos isso no <b>Método Reconexão Materna: as 3 Camadas</b> — respiração, core profundo e postura em <b>10 minutos por dia</b>, em casa, do jeito <b>seguro pra quem teve filho</b>.';
+  box.appendChild(body);
+  const feat=document.createElement('ul'); feat.className='feat';
+  feat.innerHTML='<li><span>⏱️</span> Cabe na rotina de mãe: 10 minutos por dia</li>'
+    +'<li><span>🎧</span> Áudios guiados pra fazer de olhos fechados, até com o bebê no colo</li>'
+    +'<li><span>💧</span> Nos primeiros 7 dias você já sente a barriga desinchar</li>'
+    +'<li><span>🛡️</span> Sempre com liberação médica/obstétrica</li>';
+  box.appendChild(feat);
+  const pl=document.createElement('div'); pl.className='proofline'; pl.innerHTML='Mais de <b>40 mil mães</b> já começaram essa reconexão.'; box.appendChild(pl);
+  const b=document.createElement('button'); b.className='cta'; b.textContent='SIM, QUERO VER MINHA SOLUÇÃO →';
+  b.onclick=()=>{ if(PV_URL && PV_URL!=='#'){ window.location.href=PV_URL; } else { b.textContent='➡️ Configure a URL da Página de Vendas'; } };
+  box.appendChild(b);
+  const comp=document.createElement('div'); comp.className='comp'; comp.textContent='Movimento de bem-estar e reconexão, não prescrição. Pare se sentir dor ou desconforto. Cada corpo e cada parto são únicos — resultados variam.'; box.appendChild(comp);
+}
+
+render();
+</script>
+</body>
+</html>
