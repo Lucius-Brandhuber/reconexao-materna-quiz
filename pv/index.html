@@ -132,15 +132,7 @@
   details[open] summary:after{content:"–"}
   details .body{padding:0 18px 16px;color:var(--muted)}
 
-  /* sticky bar */
-  .sticky{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
-          padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;transform:translateY(120%);transition:transform .3s;z-index:40}
-  .sticky.show{transform:none}
-  .sticky .p{font-weight:900;font-family:'Fraunces';color:var(--terra-d);font-size:17px;line-height:1}
-  .sticky .p small{display:block;font-family:'Nunito';font-weight:700;font-size:11px;color:var(--muted);text-decoration:line-through}
-  .sticky a{background:linear-gradient(180deg,#37b579,#268a5a);color:#fff;text-decoration:none;font-weight:900;font-size:15px;padding:13px 18px;border-radius:12px;white-space:nowrap}
-
-  footer{background:#f1e7df;color:var(--muted);font-size:12.5px;line-height:1.6;padding:30px 0 90px;text-align:center}
+  footer{background:#f1e7df;color:var(--muted);font-size:12.5px;line-height:1.6;padding:30px 0 44px;text-align:center}
   .disc{max-width:560px;margin:0 auto}
   @media(max-width:520px){ h1{font-size:27px} .price .now{font-size:46px} section{padding:36px 0} }
 </style>
@@ -301,11 +293,6 @@
   </div>
 </section>
 
-<div class="sticky" id="sticky">
-  <div class="p">R$27<small>R$200</small></div>
-  <a href="[CHECKOUT]">QUERO O MÉTODO</a>
-</div>
-
 <footer>
   <div class="wrap disc">
     <p><b>Reconexão Materna</b></p>
@@ -314,12 +301,5 @@
   </div>
 </footer>
 
-<script>
-  // sticky CTA aparece após rolar o hero
-  var st=document.getElementById('sticky');
-  window.addEventListener('scroll',function(){
-    if(window.scrollY>640) st.classList.add('show'); else st.classList.remove('show');
-  },{passive:true});
-</script>
 </body>
 </html>
