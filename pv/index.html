@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c0693f">
+<title>Reconexão Materna — As 3 Camadas</title>
+<meta name="description" content="O método de 3 camadas para reconectar seu corpo depois da gestação — 10 minutos por dia, em casa, seguro para quem teve filhos.">
+<link rel="icon" type="image/png" href="../assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#faf5f0; --paper:#ffffff; --ink:#3a2e28; --muted:#7c6f68;
+    --terra:#c0693f; --terra-d:#a8542f; --terra-soft:#f6e4d8; --mauve:#a87c8e;
+    --green:#2fa36b; --green-d:#268a5a; --hi:#f7d9c5; --line:#efe3da;
+    --shadow:0 14px 40px rgba(160,84,47,.14);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-size:17px;line-height:1.6;overflow-x:hidden}
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:700;line-height:1.18;letter-spacing:-.01em}
+  h1{font-size:31px;font-weight:900;margin:0 0 16px}
+  h2{font-size:26px;font-weight:900;margin:0 0 14px}
+  h3{font-size:20px;margin:0 0 8px}
+  p{margin:0 0 14px}
+  b,strong{font-weight:800}
+  .hi{background:linear-gradient(180deg,transparent 55%,var(--hi) 55%);padding:0 3px}
+  .terra{color:var(--terra)}
+  .center{text-align:center}
+  img{max-width:100%;display:block}
+  section{padding:44px 0}
+  .paper{background:var(--paper)}
+
+  /* header */
+  header{background:var(--paper);border-bottom:1px solid var(--line);padding:12px 0;position:relative;z-index:5}
+  header img{height:54px;margin:0 auto}
+
+  /* eyebrow bridge */
+  .bridge{background:var(--terra-soft);color:var(--terra-d);text-align:center;font-weight:800;font-size:14px;padding:12px 20px}
+
+  /* hero */
+  .hero{padding-top:34px}
+  .hero h1{text-align:center}
+  .lead{text-align:center;color:var(--muted);font-size:18px;max-width:540px;margin:0 auto 22px}
+  .heroimg{border-radius:20px;box-shadow:var(--shadow);margin:0 auto 24px;max-width:420px;width:100%}
+
+  /* buttons */
+  .cta{display:block;width:100%;max-width:520px;margin:20px auto;background:linear-gradient(180deg,#37b579,#268a5a);color:#fff;text-align:center;
+       text-decoration:none;font-family:'Nunito';font-weight:900;font-size:19px;padding:20px 22px;border-radius:16px;border:0;cursor:pointer;
+       box-shadow:0 12px 26px rgba(47,138,90,.34);line-height:1.25;animation:pulse 2.2s infinite}
+  .cta small{display:block;font-weight:700;font-size:13.5px;opacity:.92;margin-top:4px}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.022)}}
+  .cta.alt{background:linear-gradient(180deg,#cf7a4f,#a8542f);box-shadow:0 12px 26px rgba(168,84,47,.3);animation:none}
+  .anchor-btn{display:inline-block;background:none;border:2px solid var(--terra);color:var(--terra-d);font-weight:800;font-size:15px;
+       padding:12px 22px;border-radius:999px;text-decoration:none;margin:6px auto 0}
+
+  /* identification */
+  .idcard{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow)}
+  .problem{font-family:'Fraunces';font-weight:900;font-size:23px;color:var(--terra-d);text-align:center;margin:18px 0;line-height:1.3}
+  ul.pain{list-style:none;padding:0;margin:16px 0}
+  ul.pain li{padding:9px 0 9px 34px;position:relative;border-bottom:1px dashed var(--line)}
+  ul.pain li:last-child{border:0}
+  ul.pain li:before{content:"•";position:absolute;left:8px;top:8px;color:var(--terra);font-size:22px;line-height:1}
+
+  /* mechanism layers */
+  .layers{display:flex;flex-direction:column;gap:14px;margin:22px 0}
+  .layer{display:flex;gap:16px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--terra);
+         border-radius:14px;padding:18px}
+  .layer .num{flex:none;width:44px;height:44px;border-radius:50%;background:var(--terra-soft);color:var(--terra-d);
+         font-family:'Fraunces';font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center}
+  .layer h3{margin-bottom:4px}
+  .layer p{margin:0;color:var(--muted);font-size:15.5px}
+
+  /* deliverables */
+  .receive{background:var(--terra-soft);border-radius:20px;padding:26px 22px}
+  .receive h2{text-align:center;color:var(--terra-d)}
+  ul.deliver{list-style:none;padding:0;margin:18px 0 0}
+  ul.deliver li{background:var(--paper);border-radius:12px;padding:14px 16px 14px 46px;position:relative;margin-bottom:10px;box-shadow:0 4px 12px rgba(160,84,47,.06)}
+  ul.deliver li:before{content:"✓";position:absolute;left:16px;top:14px;width:22px;height:22px;background:var(--green);color:#fff;border-radius:50%;
+         font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:1}
+  ul.deliver b{color:var(--ink)}
+
+  /* author */
+  .authorimg{border-radius:20px;box-shadow:var(--shadow);margin:0 auto 20px;max-width:360px;width:100%}
+
+  /* proof grid */
+  .grid{display:grid;grid-template-columns:1fr;gap:14px;margin:20px 0}
+  .grid img{border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,.08);width:100%}
+  .proofnum{text-align:center;font-family:'Fraunces';font-weight:900;font-size:40px;color:var(--terra);line-height:1}
+  .proofnum small{display:block;font-family:'Nunito';font-size:15px;font-weight:700;color:var(--muted);margin-top:2px}
+
+  /* testimonials */
+  .tcard{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px;box-shadow:0 6px 16px rgba(160,84,47,.06)}
+  .tcard .stars{color:#f5a623;font-size:15px;letter-spacing:2px}
+  .tcard .name{font-weight:800;font-size:14px;color:var(--muted);margin-top:8px}
+  .placeholder-note{font-size:12.5px;color:#b9a99f;font-style:italic;text-align:center;margin-top:6px}
+
+  /* objections */
+  .obj{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .obj .q{font-weight:800;color:var(--terra-d);margin-bottom:4px}
+  .obj .a{color:var(--ink)}
+
+  /* offer */
+  .offer{background:linear-gradient(180deg,#fff,#fbf1ea);border:2px solid var(--terra);border-radius:24px;padding:28px 22px;box-shadow:var(--shadow)}
+  .offer .badge{display:inline-block;background:var(--terra);color:#fff;font-weight:800;font-size:13px;padding:6px 16px;border-radius:999px;margin-bottom:10px}
+  .stack{list-style:none;padding:0;margin:18px 0}
+  .stack li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);font-size:15.5px}
+  .stack li b{font-weight:800}
+  .stack .val{color:var(--muted);white-space:nowrap;font-weight:700}
+  .stack .total{border:0;font-weight:900;font-size:17px;padding-top:14px}
+  .price{text-align:center;margin:14px 0}
+  .price .from{color:var(--muted);text-decoration:line-through;font-size:17px}
+  .price .now{font-family:'Fraunces';font-weight:900;font-size:52px;color:var(--terra-d);line-height:1}
+  .price .now small{font-size:22px;vertical-align:top;margin-right:2px}
+  .price .cond{color:var(--muted);font-size:14px}
+
+  /* guarantee */
+  .guarantee{background:var(--paper);border:2px dashed var(--terra);border-radius:20px;padding:24px;text-align:center}
+  .seal{width:96px;height:96px;border-radius:50%;background:var(--terra-soft);color:var(--terra-d);margin:0 auto 14px;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Fraunces';font-weight:900;line-height:1;border:3px solid var(--terra)}
+  .seal .big{font-size:30px}
+  .seal .sm{font-size:11px;letter-spacing:1px;margin-top:2px}
+
+  /* faq */
+  details{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  summary{padding:16px 44px 16px 18px;font-weight:800;cursor:pointer;position:relative;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary:after{content:"+";position:absolute;right:18px;top:14px;font-size:22px;color:var(--terra);font-weight:400}
+  details[open] summary:after{content:"–"}
+  details .body{padding:0 18px 16px;color:var(--muted)}
+
+  /* sticky bar */
+  .sticky{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+          padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;transform:translateY(120%);transition:transform .3s;z-index:40}
+  .sticky.show{transform:none}
+  .sticky .p{font-weight:900;font-family:'Fraunces';color:var(--terra-d);font-size:17px;line-height:1}
+  .sticky .p small{display:block;font-family:'Nunito';font-weight:700;font-size:11px;color:var(--muted);text-decoration:line-through}
+  .sticky a{background:linear-gradient(180deg,#37b579,#268a5a);color:#fff;text-decoration:none;font-weight:900;font-size:15px;padding:13px 18px;border-radius:12px;white-space:nowrap}
+
+  footer{background:#f1e7df;color:var(--muted);font-size:12.5px;line-height:1.6;padding:30px 0 90px;text-align:center}
+  .disc{max-width:560px;margin:0 auto}
+  @media(max-width:520px){ h1{font-size:27px} .price .now{font-size:46px} section{padding:36px 0} }
+</style>
+</head>
+<body>
+
+<header><img src="../assets/logo.png" alt="Reconexão Materna"></header>
+
+<div class="bridge">✔ Você acabou de descobrir qual das 3 camadas do seu corpo está desconectada. Agora veja como reconectar todas elas.</div>
+
+<!-- ============ BLOCO 1 — HEADLINE + PROMESSA ============ -->
+<section class="hero">
+  <div class="wrap">
+    <h1 class="center">Não é dieta. Não é abdominal. É <span class="hi">reconexão</span>: o método de 10 minutos para a barriga que “travou” depois da gestação.</h1>
+    <p class="lead">O <b>Reconexão Materna</b> é um passo a passo de bem-estar, feito para mães que já tentaram de tudo e sentem que o corpo “não volta” — reativando as 3 camadas na ordem certa, em casa, no seu tempo.</p>
+    <img class="heroimg" src="../assets/autora-guia.jpg" alt="Reconexão em casa">
+    <a class="cta" href="#oferta">QUERO RECONECTAR MEU CORPO<small>acesso imediato · garantia de 7 dias</small></a>
+    <p class="center" style="font-size:13px;color:var(--muted);margin-top:-6px">Movimento de bem-estar, não prescrição. Cada corpo e cada parto são únicos.</p>
+  </div>
+</section>
+
+<!-- ============ BLOCO 2 — IDENTIFICAÇÃO + PROBLEMA ============ -->
+<section class="paper">
+  <div class="wrap">
+    <div class="idcard">
+      <p class="center" style="font-weight:800;font-size:19px">Se você se reconhece aqui, você <span class="terra">não está sozinha</span>:</p>
+      <ul class="pain">
+        <li>Você já voltou ao seu peso, mas a barriga simplesmente não voltou.</li>
+        <li>Sente um “vão” ou uma moleza no meio da barriga — como se faltasse sustentação.</li>
+        <li>Escapa um xixi quando você ri, tosse, espirra ou pega o filho no colo.</li>
+        <li>Já fez dieta, academia, abdominal, cinta, chá… e nada “pegou” de verdade.</li>
+        <li>Evita espelho e se esconde nas fotos — e isso pesa mais do que você admite.</li>
+      </ul>
+      <div class="problem">O problema nunca foi você.<br>São as 3 camadas do seu corpo que desconectaram na gestação — e ninguém te ensinou a religá-las.</div>
+      <p class="center">A boa notícia: dá pra reconectar. Na ordem certa, poucos minutos por dia, sem treino pesado.</p>
+      <div class="center"><a class="anchor-btn" href="#oferta">Já quero começar agora →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 3 — HISTÓRIA + MECANISMO ============ -->
+<section>
+  <div class="wrap">
+    <h2 class="center">O método das <span class="terra">3 Camadas</span></h2>
+    <p class="center lead">Depois da gestação, o corpo fica “travado no padrão da gravidez”. Dieta e academia não resolvem porque não é peso — é conexão. E ela volta numa ordem específica:</p>
+    <div class="layers">
+      <div class="layer"><div class="num">1</div><div><h3>Respiração</h3><p>A base de tudo. Reconecta o diafragma e “liga” novamente o core profundo que a gestação desativou.</p></div></div>
+      <div class="layer"><div class="num">2</div><div><h3>Core profundo</h3><p>Transverso e assoalho pélvico — a cinta natural do corpo. É o que dá sustentação, segura o xixi e faz a barriga parar de projetar.</p></div></div>
+      <div class="layer"><div class="num">3</div><div><h3>Postura</h3><p>O corpo sai do “padrão da gestação”, a barriga se recolhe e as dores nas costas dão trégua.</p></div></div>
+    </div>
+    <p class="center" style="font-weight:800">É por isso que abdominal comum, para quem tem afastamento, muitas vezes até piora. Faltava reativar as camadas — na ordem: respiração → core profundo → postura.</p>
+  </div>
+</section>
+
+<!-- ============ O QUE VOCÊ RECEBE ============ -->
+<section class="paper">
+  <div class="wrap">
+    <div class="receive">
+      <h2>O que você recebe hoje</h2>
+      <ul class="deliver">
+        <li><b>Ebook Reconexão Materna — As 3 Camadas.</b> 13 capítulos com o autoteste, os exercícios de bem-estar por camada, passo a passo, e a rotina de 10 minutos.</li>
+        <li><b>Bônus 1 — Áudios Guiados de Reconexão.</b> Faça de olhos fechados, até com o bebê no colo, nos dias de cansaço.</li>
+        <li><b>Bônus 2 — Guia Desinchar em 7 Dias.</b> Hábitos simples (intestino, hidratação, retenção) para sentir a barriga desinchar na primeira semana.</li>
+        <li><b>Bônus 3 — Ficha Imprimível.</b> O autoteste e a rotina de 10 minutos em 1 página, pra colar na geladeira.</li>
+      </ul>
+    </div>
+    <a class="cta" href="#oferta">QUERO O MÉTODO COMPLETO<small>ebook + 3 bônus · acesso imediato</small></a>
+  </div>
+</section>
+
+<!-- ============ AUTORA ============ -->
+<section>
+  <div class="wrap">
+    <img class="authorimg" src="../assets/autora-capa.jpg" alt="Autora">
+    <h2 class="center">Quem vai te guiar</h2>
+    <p class="center lead">Eu sou <b>[NOME DA AUTORA]</b>, [credencial — ex.: educadora física especialista em pós-parto]. Também sou mãe e já passei por essa barriga que “não volta”.</p>
+    <p class="center">Criei o Reconexão Materna depois de entender que o corpo pós-parto não precisa de mais esforço — precisa de reconexão, na ordem certa. Desde então, ajudei mais de 40 mil mães a voltarem a se reconhecer no espelho.</p>
+    <p class="center" style="font-size:13px;color:var(--muted)">[Preencha o nome e a credencial reais. Só use “fisioterapeuta/obstetra” se for verdade — é profissão regulada.]</p>
+  </div>
+</section>
+
+<!-- ============ BLOCO 4 — PROVA ============ -->
+<section class="paper">
+  <div class="wrap">
+    <div class="proofnum">+40 mil<small>mães já começaram essa reconexão em casa</small></div>
+    <div class="grid">
+      <img src="../assets/antes-depois-1.jpg" alt="Antes e depois">
+      <img src="../assets/antes-depois-2.jpg" alt="Antes e depois">
+      <img src="../assets/antes-depois-3.jpg" alt="Antes e depois">
+    </div>
+    <p class="center" style="font-size:12.5px;color:var(--muted);font-style:italic">Resultados reais de mães. Cada corpo e cada parto são únicos — resultados variam.</p>
+
+    <h3 class="center" style="margin-top:26px">O que as mães estão dizendo</h3>
+    <div class="tcard"><div class="stars">★★★★★</div><p style="margin:6px 0 0">[DEPOIMENTO: cole aqui um print/relato real de cliente — ex.: “Em 5 dias já senti a barriga desinchar e parei de escapar xixi.”]</p><div class="name">— [Nome, cidade]</div></div>
+    <div class="tcard"><div class="stars">★★★★★</div><p style="margin:6px 0 0">[DEPOIMENTO: cole aqui um print/relato real — ex.: “Fazia 3 anos que eu não me sentia assim. 10 minutos por dia mudou minha rotina.”]</p><div class="name">— [Nome, cidade]</div></div>
+    <div class="tcard"><div class="stars">★★★★★</div><p style="margin:6px 0 0">[DEPOIMENTO: cole aqui um print/relato real]</p><div class="name">— [Nome, cidade]</div></div>
+    <p class="placeholder-note">Use apenas depoimentos verdadeiros — Meta bane prova social fabricada.</p>
+  </div>
+</section>
+
+<!-- ============ OBJEÇÕES ============ -->
+<section>
+  <div class="wrap">
+    <h2 class="center">Você pode estar pensando…</h2>
+    <div class="obj"><div class="q">“Não tenho tempo pra mais nada.”</div><div class="a">São 10 minutos por dia — dá pra fazer com o bebê por perto, e ainda tem os áudios guiados pros dias corridos.</div></div>
+    <div class="obj"><div class="q">“Já tentei de tudo e não funcionou.”</div><div class="a">Porque faltava reconectar as camadas na ordem certa. Não é mais do mesmo — é o passo anterior que ninguém te ensinou.</div></div>
+    <div class="obj"><div class="q">“Tenho medo de fazer errado e piorar.”</div><div class="a">São movimentos suaves de bem-estar, com o reforço de fazer sempre com liberação médica/obstétrica e parar se sentir desconforto.</div></div>
+    <div class="obj"><div class="q">“Não sou de exercício / faz anos do meu parto.”</div><div class="a">Não é treino pesado nem academia. E funciona mesmo anos depois — o corpo só precisa reaprender a conexão.</div></div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 5 — OFERTA ============ -->
+<section class="paper" id="oferta">
+  <div class="wrap">
+    <div class="offer">
+      <div class="center"><span class="badge">OFERTA DE LANÇAMENTO</span></div>
+      <h2 class="center">Comece hoje sua reconexão</h2>
+      <ul class="stack">
+        <li><span>Ebook <b>Reconexão Materna — As 3 Camadas</b></span><span class="val">R$97</span></li>
+        <li><span><b>Bônus 1</b> — Áudios Guiados de Reconexão</span><span class="val">R$47</span></li>
+        <li><span><b>Bônus 2</b> — Guia Desinchar em 7 Dias</span><span class="val">R$37</span></li>
+        <li><span><b>Bônus 3</b> — Ficha Imprimível (Autoteste + Rotina)</span><span class="val">R$19</span></li>
+        <li class="total"><span>Valor total</span><span class="val">R$200</span></li>
+      </ul>
+      <div class="price">
+        <div class="from">De R$197</div>
+        <div class="now"><small>R$</small>27</div>
+        <div class="cond">à vista · ou parcelado no cartão</div>
+      </div>
+      <a class="cta" href="[CHECKOUT]">QUERO COMEÇAR AGORA<small>acesso imediato · 100% online</small></a>
+      <p class="center" style="font-size:13px;color:var(--muted)">Pagamento seguro · Acesso liberado na hora, no seu celular.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 6 — GARANTIA + FECHAMENTO + FAQ ============ -->
+<section>
+  <div class="wrap">
+    <div class="guarantee">
+      <div class="seal"><span class="big">7</span><span class="sm">DIAS</span></div>
+      <h3>Garantia incondicional de 7 dias</h3>
+      <p style="margin:0">Entre, faça o autoteste, comece a rotina. Se em 7 dias você sentir que não é pra você, é só pedir o reembolso — devolvemos 100%, sem perguntas. O risco é todo nosso.</p>
+    </div>
+
+    <h2 class="center" style="margin-top:34px">Você merece se reconhecer no espelho de novo</h2>
+    <p class="center">Não é sobre um corpo perfeito. É sobre voltar a se sentir forte, inteira e confortável no seu próprio corpo — do jeito seguro pra quem foi mãe.</p>
+    <a class="cta" href="[CHECKOUT]">SIM, QUERO ME RECONECTAR<small>ebook + 3 bônus por R$27 · garantia de 7 dias</small></a>
+
+    <h2 class="center" style="margin-top:34px">Perguntas frequentes</h2>
+    <details><summary>Como eu recebo o material?</summary><div class="body">Na hora do pagamento você recebe o acesso por e-mail. É 100% online — abre no celular, tablet ou computador, quando e quantas vezes quiser.</div></details>
+    <details><summary>Quanto tempo por dia preciso?</summary><div class="body">10 minutos por dia. A rotina foi desenhada pra caber na vida real de mãe.</div></details>
+    <details><summary>É seguro pra quem teve cesárea ou faz pouco tempo do parto?</summary><div class="body">São movimentos suaves de bem-estar e reconexão. Ainda assim, faça sempre com liberação médica/obstétrica e pare se sentir dor ou desconforto — cada corpo e cada parto são únicos.</div></details>
+    <details><summary>Preciso de algum equipamento?</summary><div class="body">Não. Você faz em casa, no chão ou numa cadeira. Sem academia, sem aparelhos.</div></details>
+    <details><summary>Funciona mesmo anos depois do parto?</summary><div class="body">Sim. A desconexão das camadas persiste mesmo depois de anos — e é justamente ela que o método reativa.</div></details>
+    <details><summary>E se eu não gostar?</summary><div class="body">Você tem 7 dias de garantia incondicional. Não gostou, devolvemos 100% do valor.</div></details>
+
+    <a class="cta alt" href="[CHECKOUT]">GARANTIR MEU ACESSO POR R$27</a>
+  </div>
+</section>
+
+<div class="sticky" id="sticky">
+  <div class="p">R$27<small>R$197</small></div>
+  <a href="[CHECKOUT]">QUERO O MÉTODO</a>
+</div>
+
+<footer>
+  <div class="wrap disc">
+    <p><b>Reconexão Materna</b></p>
+    <p>Este conteúdo é de bem-estar e reconexão corporal — não substitui acompanhamento médico, fisioterapêutico ou obstétrico, e não constitui prescrição ou tratamento. Antes de iniciar qualquer movimento, procure liberação do seu médico/obstetra. Pare se sentir dor ou desconforto. Cada corpo e cada parto são únicos e os resultados variam de pessoa para pessoa.</p>
+    <p>© Reconexão Materna. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script>
+  // sticky CTA aparece após rolar o hero
+  var st=document.getElementById('sticky');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>640) st.classList.add('show'); else st.classList.remove('show');
+  },{passive:true});
+</script>
+</body>
+</html>
