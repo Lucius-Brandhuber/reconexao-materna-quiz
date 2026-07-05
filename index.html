@@ -24,10 +24,10 @@
   .app{width:100%;max-width:468px;padding:0 20px 60px;position:relative}
 
   /* progress */
-  .top{position:sticky;top:0;background:#fff;padding:16px 0 8px;z-index:10}
-  .prog{height:9px;background:var(--track);border-radius:999px;overflow:hidden}
+  .top{position:sticky;top:0;background:#fff;padding:16px 0 8px;z-index:10;display:flex;align-items:center;gap:10px}
+  .prog{flex:1;height:9px;background:var(--track);border-radius:999px;overflow:hidden}
   .prog>i{display:block;height:100%;width:6%;background:var(--grad);border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
-  .back{position:absolute;left:0;top:14px;border:0;background:none;font-size:22px;color:#333;cursor:pointer;padding:6px;display:none;line-height:1}
+  .back{flex:none;border:0;background:none;font-size:24px;color:#555;cursor:pointer;padding:0 2px;line-height:1;visibility:hidden}
 
   .screen{animation:fade .35s ease both;padding-top:8px}
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -254,7 +254,7 @@ function setProgress(){
   const t=S[idx].type;
   let pct = (t==='diagnosis'||t==='transition') ? 100 : Math.max(6, Math.round(passed/total*100));
   progbar.style.width = pct+'%';
-  backBtn.style.display = (idx>0 && t!=='loading') ? 'block' : 'none';
+  backBtn.style.visibility = (idx>0 && t!=='loading') ? 'visible' : 'hidden';
 }
 
 function render(){
