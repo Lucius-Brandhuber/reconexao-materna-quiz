@@ -24,6 +24,13 @@ var CAPI_URL   = PIXEL_ID ? ('https://graph.facebook.com/v19.0/' + PIXEL_ID + '/
 // URL do site (usada em event_source_url do CAPI). NÃO apague esta linha.
 var SITE_URL   = 'https://reconexao-materna-quiz.vercel.app';
 
+/* ---- ENTREGA AUTOMÁTICA (e-mail de acesso quando a venda é paga) ---- */
+var MEMBERS_URL   = 'https://area-membros-reconexao.vercel.app'; // área de membros
+var ACCESS_KEY    = 'reconexao2026';                             // chave de acesso do comprador
+var SUPPORT_EMAIL = 'aviradaasuporte@gmail.com';                 // responder/suporte
+var FROM_NAME     = 'Reconexão Materna';                         // nome que aparece como remetente
+var LOGO_URL      = 'https://reconexao-materna-quiz.vercel.app/assets/logo.png';
+
 var DB_NAME = 'Reconexão Materna — Analytics DB';
 
 var EVENTOS_HEADERS = ['data','evento','session','step','nome','resposta','ms','referrer','ua','event_id','fbp','fbc','url'];
@@ -242,12 +249,88 @@ function saveVenda(b){
   d.vendas.appendRow(VENDAS_HEADERS.map(function(k){ return row[k]; }));
   invalidateCache();
 
+  // Entrega automática: manda o e-mail de acesso quando a venda está paga (sem duplicar).
+  try { maybeSendAccessEmail(row); } catch(err){ /* não bloqueia a gravação da venda */ }
+
   // Purchase (Meta) — quando o checkout NÃO envia Purchase pelo próprio pixel,
   // dá pra ativar a linha abaixo pra mandar via CAPI (precisa PIXEL_ID + token).
   // if (/finaliz|aprovad|paid|pago|approved|confirmed/i.test(row.status)){
   //   try { sendPurchaseCAPI(row); } catch(err){}
   // }
   return json({ ok:true, venda:true });
+}
+
+/* ====================== ENTREGA POR E-MAIL ====================== */
+// status que contam como "pago/aprovado"
+function isPaid(s){ return /paid|aprovad|approved|pago|complet|confirmed|finaliz/i.test(String(s||'')); }
+
+// só envia se: tem e-mail, está pago, e ainda NÃO enviou pra este pedido
+function maybeSendAccessEmail(row){
+  if (!row || !row.email) return;
+  if (!isPaid(row.status)) return;                 // ignora waiting/refused/refunded/chargeback
+  var props = PropertiesService.getScriptProperties();
+  var key = 'mailed_' + (row.order_id || row.email);
+  if (props.getProperty(key)) return;              // já enviado antes (postback repetido)
+  sendAccessEmail(row.email, row.nome);
+  props.setProperty(key, String(Date.now()));
+}
+
+// envia o e-mail de acesso (HTML bonito) para o comprador
+function sendAccessEmail(email, nome){
+  MailApp.sendEmail({
+    to: email,
+    subject: 'Seu acesso ao Reconexão Materna 💛',
+    htmlBody: buildAccessEmailHtml(nome),
+    name: FROM_NAME,
+    replyTo: SUPPORT_EMAIL
+  });
+}
+
+// monta o HTML do e-mail (layout em tabela + estilos inline p/ Gmail/Outlook)
+function buildAccessEmailHtml(nome){
+  var primeiro = String(nome||'').trim().split(/\s+/)[0] || '';
+  var ola = 'Olá' + (primeiro ? ', ' + primeiro : '') + '!';
+  return ''+
+  '<!doctype html><html><body style="margin:0;padding:0;background:#faf5f0;">'+
+  '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf5f0;padding:28px 12px;font-family:Arial,Helvetica,sans-serif;">'+
+  '<tr><td align="center">'+
+  '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fffdfb;border:1px solid #ecdfd4;border-radius:18px;overflow:hidden;">'+
+    '<tr><td align="center" style="padding:30px 30px 4px;">'+
+      '<img src="'+LOGO_URL+'" width="70" alt="Reconexão Materna" style="display:block;border:0;outline:none;">'+
+    '</td></tr>'+
+    '<tr><td align="center" style="padding:8px 34px 0;font-family:Georgia,\'Times New Roman\',serif;color:#9c4f2e;font-size:27px;font-weight:bold;line-height:1.25;">'+
+      'Seu acesso chegou! 💛</td></tr>'+
+    '<tr><td align="center" style="padding:12px 34px 0;color:#6b5a4e;font-size:15px;line-height:1.6;">'+
+      ola+' Sua compra do <b style="color:#4f4038;">Reconexão Materna — As 3 Camadas</b> foi confirmada. Está tudo pronto pra você começar.</td></tr>'+
+    '<tr><td style="padding:22px 34px 0;">'+
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf5f0;border:1px solid #ecdfd4;border-radius:14px;">'+
+        '<tr><td style="padding:18px 22px;">'+
+          '<div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#c0693f;font-weight:bold;">Sua chave de acesso</div>'+
+          '<div style="font-size:27px;font-weight:bold;color:#9c4f2e;letter-spacing:2px;margin:6px 0 3px;font-family:\'Courier New\',monospace;">'+ACCESS_KEY+'</div>'+
+          '<div style="font-size:13px;color:#7a6a5e;">Use essa chave para entrar na área de membros.</div>'+
+        '</td></tr></table></td></tr>'+
+    '<tr><td align="center" style="padding:24px 34px 6px;">'+
+      '<a href="'+MEMBERS_URL+'" style="display:inline-block;background:#c0693f;color:#ffffff;text-decoration:none;font-weight:bold;font-size:16px;padding:15px 36px;border-radius:12px;">Acessar minha área →</a>'+
+    '</td></tr>'+
+    '<tr><td align="center" style="padding:0 34px 6px;font-size:12px;color:#9a8b7e;">ou copie no navegador: '+MEMBERS_URL+'</td></tr>'+
+    '<tr><td style="padding:18px 34px 0;">'+
+      '<div style="font-family:Georgia,serif;font-size:18px;color:#9c4f2e;font-weight:bold;margin-bottom:8px;">O que está te esperando lá dentro</div>'+
+      '<div style="font-size:15px;line-height:2;color:#5b4a3f;">'+
+        '📖&nbsp;&nbsp;Ebook <b>Reconexão Materna — As 3 Camadas</b><br>'+
+        '🎧&nbsp;&nbsp;Áudios guiados de reconexão<br>'+
+        '💧&nbsp;&nbsp;Guia Desinchar em 7 Dias<br>'+
+        '📝&nbsp;&nbsp;Ficha imprimível (autoteste + rotina)</div></td></tr>'+
+    '<tr><td style="padding:20px 34px 0;">'+
+      '<div style="background:#fdf3e9;border:1px solid #f0dcc6;border-radius:12px;padding:14px 18px;font-size:13.5px;color:#8a6a4a;line-height:1.7;">'+
+        '<b>Como entrar:</b> 1) Clique no botão acima&nbsp;·&nbsp; 2) Digite a chave <b>'+ACCESS_KEY+'</b>&nbsp;·&nbsp; 3) Pronto — abre no celular ou no computador.</div></td></tr>'+
+    '<tr><td align="center" style="padding:22px 34px 4px;font-size:13.5px;color:#7a6a5e;line-height:1.6;">'+
+      'Qualquer dúvida, é só responder este e-mail ou falar com a gente:<br>'+
+      '<a href="mailto:'+SUPPORT_EMAIL+'" style="color:#9c4f2e;font-weight:bold;text-decoration:none;">'+SUPPORT_EMAIL+'</a></td></tr>'+
+    '<tr><td align="center" style="padding:20px 34px 30px;font-size:11px;color:#a89a8d;line-height:1.6;border-top:1px solid #f0e6db;">'+
+      'Reconexão Materna — As 3 Camadas · Conteúdo de bem-estar e reconexão corporal, não substitui acompanhamento médico. Antes de iniciar, procure a liberação do seu médico ou obstetra.</td></tr>'+
+  '</table>'+
+  '<div style="font-size:11px;color:#b6a99c;padding:14px;">Você recebeu este e-mail porque adquiriu o Reconexão Materna.</div>'+
+  '</td></tr></table></body></html>';
 }
 
 /* ---- reset ---- */
@@ -345,9 +428,16 @@ function sha256(s){
 function autorizar(){
   db(); // cria a planilha e pede acesso ao Drive/Sheets
   UrlFetchApp.fetch('https://graph.facebook.com/', { muteHttpExceptions:true }); // script.external_request
+  MailApp.getRemainingDailyQuota(); // consente o escopo de ENVIAR E-MAIL (sem enviar nada)
   Logger.log('OK — planilha: ' + getSS().getUrl());
 }
+// PRÉ-VISUALIZAR o e-mail de acesso: troque pelo SEU e-mail e rode esta função.
+function testarEmail(){
+  sendAccessEmail('luciusbrandhuber2@gmail.com', 'Maria');   // <-- coloque seu e-mail aqui
+  Logger.log('E-mail de teste enviado. Confira a caixa de entrada (e spam).');
+}
 // Gera 1 evento + 1 venda de teste para validar o fluxo (depois use "Resetar dados").
+// OBS: como status='aprovada' e tem e-mail, isto TAMBÉM dispara o e-mail de acesso.
 function testeRapido(){
   saveEvent({ ev:'view', s:'TESTE_'+Date.now(), step:'0', ua:'teste', url:SITE_URL });
   saveVenda({ status:'aprovada', payment_method:'pix', value:29.90, name:'Teste', email:'teste@exemplo.com', order_id:'T1', __venda:true });
