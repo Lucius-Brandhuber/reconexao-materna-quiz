@@ -343,12 +343,20 @@ src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
 <script>
   if(window.rmTrack){
     rmTrack.view('pv');
+    // A/B de preço: troca o preço exibido conforme a variante (a=29,90 · b=34,90)
+    if(window.rmAB && rmAB.price !== '29,90'){
+      document.querySelectorAll('.now, a.cta').forEach(function(el){
+        el.innerHTML = el.innerHTML.replace(/29,90/g, rmAB.price);
+      });
+    }
     document.querySelectorAll('a.cta, a.cta.alt, a.anchor-btn').forEach(function(a){
       var href = a.getAttribute('href') || '';
       var label = (a.textContent || '').trim().replace(/\s+/g,' ').slice(0,50);
       if(href.charAt(0) === '#'){ a.addEventListener('click', function(){ rmTrack.click('oferta', label); }); }
       else {
-        if(window.rmUtm){ a.href = rmUtm.append(href); }   // repassa os UTMs pro checkout
+        var target = (window.rmAB ? rmAB.checkout : href);   // A/B: checkout da variante
+        if(window.rmUtm){ target = rmUtm.append(target); }   // repassa os UTMs pro checkout
+        a.href = target;
         a.addEventListener('click', function(){ rmTrack.checkout(label); });
       }
     });

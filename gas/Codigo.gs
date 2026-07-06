@@ -33,8 +33,8 @@ var LOGO_URL      = 'https://reconexao-materna-quiz.vercel.app/assets/logo.png';
 
 var DB_NAME = 'Reconexão Materna — Analytics DB';
 
-var EVENTOS_HEADERS = ['data','evento','session','step','nome','resposta','ms','referrer','ua','event_id','fbp','fbc','url'];
-var VENDAS_HEADERS  = ['data','status','metodo','valor','nome','email','telefone','order_id','raw','produto'];
+var EVENTOS_HEADERS = ['data','evento','session','step','nome','resposta','ms','referrer','ua','event_id','fbp','fbc','url','ab'];
+var VENDAS_HEADERS  = ['data','status','metodo','valor','nome','email','telefone','order_id','raw','produto','bump','bump_itens'];
 var CAPILOG_HEADERS = ['data','evento','event_id','s','status_code','response'];
 
 /* ====================== PLANILHA (auto-cria) ====================== */
@@ -73,6 +73,8 @@ function db(){
 function doGet(e){
   var p = (e && e.parameter) || {};
   if (p.ping) return json({ ok:true, pixel:PIXEL_ID });
+  // Área de membros pergunta: "esse e-mail comprou? levou o order bump?"
+  if (p.entitle) return entitlements(p.entitle);
 
   if (p.all){
     // Delta sync: admin manda ?since=<maior data que já tem> e recebe só o novo.
@@ -212,7 +214,8 @@ function saveEvent(b){
     event_id: b.event_id || b.eventId || newId(),
     fbp:      b.fbp || '',
     fbc:      b.fbc || '',
-    url:      b.url || ''
+    url:      b.url || '',
+    ab:       b.ab || ''
   };
   d.eventos.appendRow(EVENTOS_HEADERS.map(function(k){ return row[k]; }));
   invalidateCache();
@@ -222,18 +225,25 @@ function saveEvent(b){
 /* ---- gravar venda (postback do checkout) ---- */
 function saveVenda(b){
   var d = db();
-  var status = b.status || b.status_transaction || b.transaction_status || (b.transaction && b.transaction.status) || '';
+  var status = b.status || b.status_transaction || b.transaction_status || (b.transaction && (b.transaction.payment_status || b.transaction.status)) || '';
   var metodo = b.payment_method || b.metodo || b.method || (b.transaction && b.transaction.payment_method) || '';
-  // valor: Payt manda o total em product.price EM CENTAVOS (ex.: 2990 = R$29,90).
+  // valor: na Payt o total vem EM CENTAVOS. transaction.total_price já inclui o(s) order bump(s).
   // Outros checkouts mandam value/amount/total em reais. Ordem de preferência:
-  var valor  = b.value != null ? b.value
+  var valor  = (b.transaction && b.transaction.total_price != null) ? toNumber(b.transaction.total_price) / 100  // Payt: total c/ bump (centavos)
+             : b.value != null ? b.value
              : b.amount != null ? b.amount
              : b.total != null ? b.total
              : (b.transaction && b.transaction.amount != null) ? b.transaction.amount
-             : (b.product && b.product.price != null) ? toNumber(b.product.price) / 100   // Payt (centavos)
+             : (b.product && b.product.price != null) ? toNumber(b.product.price) / 100   // Payt: só o produto principal (centavos)
              : (b.paid_amount != null) ? b.paid_amount
              : 0;
   var cust   = b.customer || b.cliente || {};
+  // Order bump: a Payt só inclui "order_bumps" (array) quando o comprador leva o bump.
+  var bumps  = b.order_bumps || b.orderBumps || b.bumps || [];
+  if (!Array.isArray(bumps)) bumps = [];
+  var bumpItens = bumps.map(function(x){
+    return (x && (x.name || (x.product && x.product.name))) || '';
+  }).filter(String).join(' | ');
   var row = {
     data:     Date.now(),
     status:   String(status),
@@ -244,7 +254,9 @@ function saveVenda(b){
     telefone: b.phone || b.telefone || cust.phone || cust.phone_number || '',
     order_id: b.order_id || b.orderId || b.id || b.transaction_id || (b.transaction && b.transaction.id) || '',
     raw:      JSON.stringify(b).slice(0, 4000),
-    produto:  b.__produto || b.produto || 'ebook'
+    produto:  b.__produto || b.produto || 'ebook',
+    bump:      bumps.length ? 'sim' : '',
+    bump_itens: bumpItens
   };
   d.vendas.appendRow(VENDAS_HEADERS.map(function(k){ return row[k]; }));
   invalidateCache();
@@ -263,6 +275,26 @@ function saveVenda(b){
 /* ====================== ENTREGA POR E-MAIL ====================== */
 // status que contam como "pago/aprovado"
 function isPaid(s){ return /paid|aprovad|approved|pago|complet|confirmed|finaliz/i.test(String(s||'')); }
+
+/* ---- entitlements: responde à área de membros se o e-mail comprou e se levou o bump ---- */
+function entitlements(email){
+  email = String(email || '').trim().toLowerCase();
+  var out = { ok:true, email:email, paid:false, bump:false };
+  if (!email) { out.ok = false; return json(out); }
+  var d = db();
+  var vals = d.vendas.getDataRange().getValues();
+  if (vals.length < 2) return json(out);
+  var head = vals[0];
+  var iEmail = head.indexOf('email'), iStatus = head.indexOf('status'), iBump = head.indexOf('bump');
+  for (var i = 1; i < vals.length; i++){
+    if (String(vals[i][iEmail] || '').trim().toLowerCase() !== email) continue;
+    if (isPaid(vals[i][iStatus])){
+      out.paid = true;
+      if (iBump >= 0 && String(vals[i][iBump] || '').toLowerCase() === 'sim') out.bump = true;
+    }
+  }
+  return json(out);
+}
 
 // só envia se: tem e-mail, está pago, e ainda NÃO enviou pra este pedido
 function maybeSendAccessEmail(row){
@@ -442,4 +474,16 @@ function testeRapido(){
   saveEvent({ ev:'view', s:'TESTE_'+Date.now(), step:'0', ua:'teste', url:SITE_URL });
   saveVenda({ status:'aprovada', payment_method:'pix', value:29.90, name:'Teste', email:'teste@exemplo.com', order_id:'T1', __venda:true });
   Logger.log('Eventos/vendas de teste gravados. Planilha: ' + getSS().getUrl());
+}
+// Simula uma venda COM order bump (formato Payt) para testar a liberação da planilha.
+// Depois rode com o e-mail abaixo em: <URL_do_app>/exec?entitle=bumptest@exemplo.com  -> deve vir {bump:true}
+function testeVendaComBump(){
+  saveVenda({
+    customer:{ name:'Maria Teste', email:'bumptest@exemplo.com' },
+    product:{ name:'Reconexão Materna', code:'PRINCIPAL', price:2990 },
+    order_bumps:[{ name:'Planilha da Reconexão', code:'PLANILHA', product:{ name:'Planilha da Reconexão', code:'PLANILHA', price:1990 } }],
+    transaction:{ payment_status:'paid', total_price:4980, id:'TBUMP1' },
+    __venda:true
+  });
+  Logger.log('Venda de teste COM bump gravada. Cheque a coluna "bump" (deve estar "sim") e o entitle de bumptest@exemplo.com.');
 }

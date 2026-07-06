@@ -5,6 +5,21 @@
   /* URL /exec do Web App do Apps Script (backend de analytics) */
   var GAS = 'https://script.google.com/macros/s/AKfycbyac9JB4LWmOcudz-l7ifNrrcBV9-wpClgiw0RoYlL7uHUB8i_NBtwXo53DINSF4BCi/exec';
 
+  /* ---- A/B de PREÇO: variante fixa por visitante (sticky), sorteada na 1ª visita ----
+     a = R$29,90 (checkout RB5X86)  ·  b = R$34,90 (checkout qZCwdpG)
+     A variante é sorteada já no quiz e vai grudada até a PV (mesmo localStorage). */
+  var AB = {
+    a: { price:'29,90', value:29.90, checkout:'https://checkout.payt.com.br/c/RB5X86' },
+    b: { price:'34,90', value:34.90, checkout:'https://payt.site/qZCwdpG' }
+  };
+  function abPick(){
+    var k='rm_ab', v=localStorage.getItem(k);
+    if(v!=='a' && v!=='b'){ v = Math.random()<0.5 ? 'a' : 'b'; try{ localStorage.setItem(k,v); }catch(x){} }
+    return v;
+  }
+  var _ab = abPick();
+  window.rmAB = { v:_ab, price:AB[_ab].price, value:AB[_ab].value, checkout:AB[_ab].checkout, is:function(x){ return _ab===x; } };
+
   function uid(){ return 'xxxxxxxx'.replace(/x/g,function(){return (Math.random()*16|0).toString(16);})+Date.now().toString(36); }
   function sid(){ var k='rm_sid'; var v=localStorage.getItem(k); if(!v){ v=uid(); localStorage.setItem(k,v); } return v; }
   function cookie(n){ var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)'); return m?m.pop():''; }
@@ -18,7 +33,7 @@
       step: (p.step!=null ? p.step : ''),
       name: p.name||'', ans: p.ans||'', ms: p.ms||0,
       ref: document.referrer||'', ua: navigator.userAgent, url: location.href,
-      event_id: uid(), fbp: cookie('_fbp'), fbc: cookie('_fbc')
+      event_id: uid(), fbp: cookie('_fbp'), fbc: cookie('_fbc'), ab: _ab
     };
     backup(e);
     if(!GAS || /COLE_AQUI/.test(GAS)) return;   // ainda sem backend: só backup local
@@ -52,6 +67,6 @@
                  else if(String(step)==='pv')      fbTrack('ViewContent'); }, // abriu a página de vendas
     answer:   function(step,text,ms){ send('answer', {step:step, ans:text, ms:ms}); },
     click:    function(step,label,ms){ send('click', {step:step, name:label||'Botão', ms:ms}); },
-    checkout: function(label){ send('checkout_click', {name:label||'CTA'}); fbTrack('InitiateCheckout'); }
+    checkout: function(label){ send('checkout_click', {name:label||'CTA'}); fbTrack('InitiateCheckout', {value:(window.rmAB?rmAB.value:29.90), currency:'BRL'}); }
   };
 })();

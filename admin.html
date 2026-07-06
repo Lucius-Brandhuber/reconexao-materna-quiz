@@ -80,6 +80,10 @@
   .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
   .card h2{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .card h2 .badge{font-size:11px;font-weight:700;color:var(--primary);background:#fdeef5;border-radius:99px;padding:3px 10px}
+  .sig{margin-top:12px;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:600;line-height:1.5}
+  .sig.ok{background:#e8f7ed;color:#1f9b40;border:1px solid #b6e6c6}
+  .sig.ns{background:#fff6e6;color:#9a6a1e;border:1px solid #f0dcb0}
+  .sig.small{background:#f3eee9;color:#7a6a5e;border:1px solid #e6dcd0}
 
   /* ===== FUNNEL MINI ===== */
   .funnel-mini{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:8px}
@@ -1223,22 +1227,28 @@ function barGroup(obj,limit){
     <div class="bg-track"><div class="bg-fill" style="width:${v/max*100}%"></div></div>
     <div class="bg-val">${fmt(v)}</div></div>`).join('')+'</div>';
 }
+const AB_MIN_BUYS = 25;   // mínimo de compras por variante antes de cravar o vencedor
 /* teste A/B de preço com significância */
 function priceAbCard(){
-  return '';   // sem teste A/B de preço neste funil (preço único R$29,90)
-  const labels={A:'A · R$ 27,90 (atual)', B:'B · R$ 34,90'};
-  const vis = uCountBy(e=>e.price_ab, e=>!!e.price_ab);
-  const chk = uCountBy(e=>e.price_ab, e=>e.ev==='checkout_click'&&e.price_ab);
-  const buys={}, rev={};
-  _vendas.filter(v=>APPROVED.test(v.status)).forEach(v=>{ const k=v.ab; if(k==='A'||k==='B'){ buys[k]=(buys[k]||0)+1; rev[k]=(rev[k]||0)+vValor(v); } });
-  const variants=['A','B'];
-  const totalVis = variants.reduce((a,k)=>a+(vis[k]||0),0);
-  const totalBuys= variants.reduce((a,k)=>a+(buys[k]||0),0);
+  const labels={a:'A · R$ 29,90', b:'B · R$ 34,90'};
+  // Acessos e cliques por variante (campo "ab" nos eventos: minúsculo a/b)
+  const vis = uCountBy(e=>e.ab, e=>!!e.ab);
+  const chk = uCountBy(e=>e.ab, e=>e.ev==='checkout_click'&&!!e.ab);
+  // Vendas: o postback da Payt não carrega a variante → atribui pelo VALOR
+  // (R$29,90 = A · R$34,90 = B; corte no meio, R$32,40).
+  const buys={a:0,b:0}, rev={a:0,b:0};
+  _vendas.filter(v=>APPROVED.test(v.status)).forEach(v=>{
+    const val=vValor(v), k = val < 32.40 ? 'a' : 'b';
+    buys[k]++; rev[k]+=val;
+  });
+  const variants=['a','b'];
+  const totalVis = variants.reduce((s,k)=>s+(vis[k]||0),0);
+  const totalBuys= variants.reduce((s,k)=>s+(buys[k]||0),0);
   if(!totalVis && !totalBuys){
-    return `<div class="card"><h2>🧪 Teste A/B de Preço</h2><div class="empty">Ainda sem dados. Assim que o tráfego novo entrar, os acessos e as compras por variante aparecem aqui.</div></div>`;
+    return `<div class="card"><h2>🧪 Teste A/B de Preço</h2><div class="empty">Ainda sem dados. Assim que o tráfego novo entrar (já com a variante gravada), os acessos e as compras por variante aparecem aqui.</div></div>`;
   }
   const rows = variants.map(k=>{
-    const a=vis[k]||0, cl=chk[k]||0, c=buys[k]||0, conv=a>0?(c/a*100):0;
+    const a=vis[k]||0, cl=chk[k]||0, c=buys[k]||0, conv=a>0?(c/a*100):0, rpv=a>0?(rev[k]/a):0;
     return `<tr style="border-top:1px solid var(--line)">
       <td style="padding:9px 6px;font-weight:700">${labels[k]}</td>
       <td style="padding:9px 6px;text-align:right">${fmt(a)}</td>
@@ -1246,22 +1256,23 @@ function priceAbCard(){
       <td style="padding:9px 6px;text-align:right;font-weight:700">${fmt(c)}</td>
       <td style="padding:9px 6px;text-align:right;color:var(--primary);font-weight:700">${conv.toFixed(1).replace('.',',')}%</td>
       <td style="padding:9px 6px;text-align:right">${fmtMoney(rev[k]||0)}</td>
+      <td style="padding:9px 6px;text-align:right;font-weight:700">${fmtMoney(rpv)}</td>
     </tr>`;
   }).join('');
-  // significância (duas proporções: compras/acessos)
+  // significância (duas proporções: compras/acessos). Vencedor = maior receita por visitante.
   let sig='';
-  const nA=vis.A||0, nB=vis.B||0, cA=buys.A||0, cB=buys.B||0;
+  const nA=vis.a||0, nB=vis.b||0, cA=buys.a||0, cB=buys.b||0;
+  const rpvA=nA>0?rev.a/nA:0, rpvB=nB>0?rev.b/nB:0, winner=rpvB>rpvA?'B':'A';
   if(cA<AB_MIN_BUYS||cB<AB_MIN_BUYS){
-    sig=`<div class="sig small">⏳ Amostra ainda pequena — colete pelo menos ${AB_MIN_BUYS} compras por variante antes de decidir (A: ${cA} · B: ${cB}).</div>`;
+    sig=`<div class="sig small">⏳ Amostra ainda pequena — junte pelo menos ${AB_MIN_BUYS} compras por variante antes de decidir (A: ${cA} · B: ${cB}).</div>`;
   }else if(nA>0&&nB>0){
     const p1=cA/nA, p2=cB/nB, p=(cA+cB)/(nA+nB);
     const se=Math.sqrt(p*(1-p)*(1/nA+1/nB));
     const z=se>0?Math.abs(p1-p2)/se:0;
-    const winner = (rev.B||0)/(nB||1) > (rev.A||0)/(nA||1) ? 'B' : 'A';
-    if(z>=1.96) sig=`<div class="sig ok">✅ Diferença significativa (95%) — variante <b>${winner}</b> gera mais receita por visitante (z=${z.toFixed(2)}).</div>`;
-    else sig=`<div class="sig ns">📊 Ainda sem significância estatística (z=${z.toFixed(2)} &lt; 1,96) — continue o teste.</div>`;
+    if(z>=1.96) sig=`<div class="sig ok">✅ Diferença significativa (95%) — variante <b>${winner}</b> gera mais receita por visitante (${fmtMoney(winner==='B'?rpvB:rpvA)} vs ${fmtMoney(winner==='B'?rpvA:rpvB)}, z=${z.toFixed(2)}).</div>`;
+    else sig=`<div class="sig ns">📊 Ainda sem significância estatística (z=${z.toFixed(2)} &lt; 1,96) — continue o teste. Por ora, <b>${winner}</b> está na frente em receita/visitante.</div>`;
   }
-  return `<div class="card"><h2>🧪 Teste A/B de Preço <span class="badge">A: R$ 27,90 · B: R$ 34,90</span></h2>
+  return `<div class="card"><h2>🧪 Teste A/B de Preço <span class="badge">A: R$ 29,90 · B: R$ 34,90</span></h2>
     <table style="width:100%;border-collapse:collapse;font-size:13.5px">
       <thead><tr style="color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em">
         <th style="text-align:left;padding:0 6px 6px">Variante</th>
@@ -1270,11 +1281,12 @@ function priceAbCard(){
         <th style="text-align:right;padding:0 6px 6px">Compras</th>
         <th style="text-align:right;padding:0 6px 6px">Conversão</th>
         <th style="text-align:right;padding:0 6px 6px">Receita</th>
+        <th style="text-align:right;padding:0 6px 6px">R/visit.</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
     ${sig}
-    <div class="note">Acessos = visitantes únicos por variante · Compras = vendas aprovadas com <code>ab</code> (postback Payt). Significância via teste z de duas proporções (compras/acessos).</div>
+    <div class="note">Acessos = visitantes únicos por variante (campo <code>ab</code>) · Compras atribuídas pelo <b>valor</b> da venda (R$29,90→A · R$34,90→B), já que o postback não manda a variante · <b>R/visit.</b> = receita por visitante, a métrica que decide um teste de preço. Significância por teste z de duas proporções.</div>
   </div>`;
 }
 function tabResumo(){
