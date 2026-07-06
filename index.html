@@ -19,9 +19,10 @@
     --terra:#c06a45;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;padding:0;background:#fff}
+  html{-webkit-text-size-adjust:100%}
+  html,body{margin:0;padding:0;background:#fff;overscroll-behavior-y:contain}
   body{font-family:'Nunito',system-ui,-apple-system,sans-serif;color:var(--ink);
-       display:flex;justify-content:center;min-height:100vh}
+       display:flex;justify-content:center;min-height:100vh;min-height:100dvh}
   .app{width:100%;max-width:468px;padding:0 20px 60px;position:relative}
 
   /* progress */
@@ -94,7 +95,7 @@
   .note{text-align:center;font-size:12.5px;color:#9a9aa0;margin-top:14px;font-style:italic}
 
   /* loading */
-  .loading{min-height:64vh;display:flex;flex-direction:column;justify-content:center}
+  .loading{min-height:64vh;min-height:64dvh;display:flex;flex-direction:column;justify-content:center}
   .lrow{display:flex;justify-content:space-between;font-weight:800;font-size:16px;margin-bottom:8px}
   .ltrack{height:12px;background:#ededed;border-radius:999px;overflow:hidden}
   .ltrack>i{display:block;height:100%;width:0;background:var(--purple);border-radius:999px;transition:width 1.9s linear}
@@ -107,7 +108,7 @@
   .cimg{width:100%;height:262px;flex:none;object-fit:cover;display:block;background:#111}
   .ba{height:280px;display:flex}
   .ba>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:800;color:#8a8a90}
-  .ba .before{background:#eceined;background:#edeef0}
+  .ba .before{background:#edeef0}
   .ba .after{background:linear-gradient(160deg,#f3e6f8,#e3cdec);color:#9a5bb0}
   .ba small{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:.8}
   .carcap{text-align:center;padding:14px;font-weight:700;color:#333;font-size:14px;border-top:1px solid var(--line)}
@@ -145,6 +146,39 @@
   .feat li span{flex:none}
   .comp{background:#f7f4f9;border-left:3px solid var(--lav-b);border-radius:8px;padding:11px 13px;font-size:12px;color:#7a7a80;line-height:1.5;margin:14px 0}
   .proofline{text-align:center;font-weight:800;color:#333;margin:14px 0;font-size:15px}
+
+  /* ===== celulares pequenos (≤360px) ===== */
+  @media (max-width:360px){
+    .app{padding:0 15px 54px}
+    .logohdr{padding:12px 0 2px}
+    .logohdr img{height:58px}
+    .top{padding:9px 0 7px}
+    h2.q{font-size:20.5px;margin-bottom:18px}
+    .intro{font-size:14px}
+    .cover-img{width:150px;height:150px;margin-bottom:14px}
+    .grid2{gap:10px}
+    .gopt{padding:15px 12px;font-size:14.5px;gap:9px}
+    .gopt .ring{width:20px;height:20px}
+    .cards{gap:11px}
+    .card .ph{height:148px}
+    .cards.one .ph{height:200px}
+    .card .cl{padding:11px;font-size:13.5px}
+    .opt{padding:14px;font-size:14.5px;margin-bottom:10px}
+    .cta,.cont{padding:16px;font-size:15.5px}
+    .cimg{height:230px}
+    .tr-lead{font-size:19px}
+    .dtext .big{font-size:16px}
+  }
+  /* ===== celulares grandes (≥430px) ===== */
+  @media (min-width:430px){
+    h2.q{font-size:24px}
+    .gopt{font-size:15.5px}
+  }
+  /* respeita quem prefere menos animação */
+  @media (prefers-reduced-motion:reduce){
+    .screen{animation:none}
+    .prog>i,.ctrack,.gopt,.opt,.card,.cta,.cont{transition:none}
+  }
 </style>
 </head>
 <body>
