@@ -217,7 +217,15 @@ function saveVenda(b){
   var d = db();
   var status = b.status || b.status_transaction || b.transaction_status || (b.transaction && b.transaction.status) || '';
   var metodo = b.payment_method || b.metodo || b.method || (b.transaction && b.transaction.payment_method) || '';
-  var valor  = b.value != null ? b.value : (b.amount != null ? b.amount : (b.total != null ? b.total : (b.transaction && b.transaction.amount)));
+  // valor: Payt manda o total em product.price EM CENTAVOS (ex.: 2990 = R$29,90).
+  // Outros checkouts mandam value/amount/total em reais. Ordem de preferência:
+  var valor  = b.value != null ? b.value
+             : b.amount != null ? b.amount
+             : b.total != null ? b.total
+             : (b.transaction && b.transaction.amount != null) ? b.transaction.amount
+             : (b.product && b.product.price != null) ? toNumber(b.product.price) / 100   // Payt (centavos)
+             : (b.paid_amount != null) ? b.paid_amount
+             : 0;
   var cust   = b.customer || b.cliente || {};
   var row = {
     data:     Date.now(),
