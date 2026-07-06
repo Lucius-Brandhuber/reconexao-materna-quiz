@@ -736,18 +736,28 @@ function renderTab(){
 }
 
 /* ====================== FUNIL (etapas clicáveis + drill-down) ====================== */
-const FUNIL_STEPS = [
-  {k:'Visitante (abriu o quiz)',       short:'Visitante',        tag:'view · step 0',        pred:e=>e.ev==='view'&&String(e.step)==='0'},
-  {k:'Quiz · Pergunta 1 (Lead)',       short:'Lead (P1)',        tag:'answer · step 1',      pred:e=>e.ev==='answer'&&String(e.step)==='1'},
-  {k:'Quiz · Pergunta 8 (meio)',       short:'Meio (P8)',        tag:'answer · step 8',      pred:e=>e.ev==='answer'&&String(e.step)==='8'},
-  {k:'Quiz concluído (Pergunta 16)',   short:'Quiz fim',         tag:'answer · step 16',     pred:e=>e.ev==='answer'&&String(e.step)==='16'},
-  {k:'Diagnóstico — viu o resultado',  short:'Diagnóstico',      tag:'view · diagnostico',   pred:e=>e.ev==='view'&&String(e.step)==='diagnostico', clicks:()=>uSet(e=>e.ev==='click'&&String(e.step)==='cta_pv')},
-  {k:'Página de vendas — abriu',       short:'Página de vendas', tag:'view · pv',            pred:e=>e.ev==='view'&&String(e.step)==='pv', clicks:()=>uSet(e=>e.ev==='checkout_click')},
-  {k:'Checkout — clicou em comprar',   short:'Checkout',         tag:'checkout_click',       pred:e=>e.ev==='checkout_click'}
-];
+/* Passos do funil = cada etapa do quiz (P1…P16) + diagnóstico + PV + checkout.
+   Montado a partir de QUIZ_QS (definido mais abaixo) → 1 passo por pergunta. */
+let _FUNIL_STEPS = null;
+function funilSteps(){
+  if(_FUNIL_STEPS) return _FUNIL_STEPS;
+  _FUNIL_STEPS = [
+    {k:'Visitante (abriu o quiz)', short:'Visitante', tag:'view · step 0', pred:e=>e.ev==='view'&&String(e.step)==='0'},
+    ...QUIZ_QS.map(q=>({
+      k:'P'+q.step+' — '+q.q,
+      short:q.emoji+' P'+q.step,
+      tag:'answer · step '+q.step,
+      pred:e=>e.ev==='answer'&&String(e.step)===String(q.step)
+    })),
+    {k:'Diagnóstico — viu o resultado', short:'🩺 Diagnóstico', tag:'view · diagnostico', pred:e=>e.ev==='view'&&String(e.step)==='diagnostico', clicks:()=>uSet(e=>e.ev==='click'&&String(e.step)==='cta_pv')},
+    {k:'Página de vendas — abriu', short:'🛍️ Pág. vendas', tag:'view · pv', pred:e=>e.ev==='view'&&String(e.step)==='pv', clicks:()=>uSet(e=>e.ev==='checkout_click')},
+    {k:'Checkout — clicou em comprar', short:'🛒 Checkout', tag:'checkout_click', pred:e=>e.ev==='checkout_click'}
+  ];
+  return _FUNIL_STEPS;
+}
 function tabFunil(){
   const ap = _vendas.filter(v=>APPROVED.test(v.status)).length;
-  const J = FUNIL_STEPS.map(st=>({...st, v:uSet(st.pred)}));
+  const J = funilSteps().map(st=>({...st, v:uSet(st.pred)}));
   J.push({k:'Compra aprovada', short:'Compra', tag:'venda · checkout', v:ap, noDrill:true});
   const river = riverFunnel(J);
   const max=Math.max(1,...J.map(d=>d.v));
@@ -778,7 +788,7 @@ function tabFunil(){
 /* rio de conversão estilo analytics — afunila suave entre os passos */
 let _river = [];
 function riverFunnel(J){
-  const n=J.length, W=210, RH=230, cy=125, LABELS=86, H=RH+LABELS, TOT=n*W;
+  const n=J.length, W=165, RH=230, cy=125, LABELS=86, H=RH+LABELS, TOT=n*W;
   const maxV=Math.max(1,...J.map(d=>d.v));
   const hs=J.map(d=>Math.max(5, d.v/maxV*(RH-50)));
   const xm=i=>i*W+W*0.55;
@@ -856,7 +866,7 @@ function riverTip(evt,i){
   if(d.noDrill) h+=`<div style="font-size:11px;color:var(--muted);margin-top:8px">Vendas via postback do checkout (sem sessão vinculada).</div>`;
   tip.innerHTML=h;
   tip.style.display='block';
-  const W=210, wrap=tip.parentElement;
+  const W=165, wrap=tip.parentElement;
   const tw=tip.offsetWidth||260;
   let x=i*W+W/2-tw/2;
   x=Math.max(8, Math.min(x, wrap.scrollWidth-tw-8));
@@ -865,7 +875,7 @@ function riverTip(evt,i){
 function riverTipHide(){ const t=$('#riverTip'); if(t) t.style.display='none'; }
 
 function openDrill(idx){
-  const st = FUNIL_STEPS[idx]; if(!st) return;
+  const st = funilSteps()[idx]; if(!st) return;
   const bySid = new Map();
   liveEv().forEach(e=>{
     if(!st.pred(e)||!e.s) return;
