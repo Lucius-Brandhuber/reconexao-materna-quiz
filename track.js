@@ -2,8 +2,8 @@
    Gera session id, dispara view / answer / click / checkout_click para o GAS e
    mantém backup local. Usa fetch no-cors + text/plain (evita preflight CORS). */
 (function(){
-  /* URL /exec do Web App do Apps Script (backend de analytics) */
-  var GAS = 'https://script.google.com/macros/s/AKfycbyac9JB4LWmOcudz-l7ifNrrcBV9-wpClgiw0RoYlL7uHUB8i_NBtwXo53DINSF4BCi/exec';
+  /* Backend de analytics (Supabase Edge Function — substituiu o Google Apps Script) */
+  var GAS = 'https://nyuycffqncuavzuhyofq.supabase.co/functions/v1/rm-api';
 
   /* ---- A/B de PREÇO: variante fixa por visitante (sticky), sorteada na 1ª visita ----
      a = R$29,90 (checkout RB5X86)  ·  b = R$34,90 (checkout qZCwdpG)

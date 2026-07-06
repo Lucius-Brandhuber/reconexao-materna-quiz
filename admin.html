@@ -293,7 +293,7 @@ const CKEY  = PFX+'_admin_cache';           // cache do painel
 const PERIODK = PFX+'_period';
 const SESSK = PFX+'_admin_sess';
 // URL /exec do Web App do Apps Script (backend de analytics)
-const GAS   = 'https://script.google.com/macros/s/AKfycbyac9JB4LWmOcudz-l7ifNrrcBV9-wpClgiw0RoYlL7uHUB8i_NBtwXo53DINSF4BCi/exec';
+const GAS   = 'https://nyuycffqncuavzuhyofq.supabase.co/functions/v1/rm-api';   // Supabase Edge Function (ex-Google Apps Script)
 
 const QUIZ_TOTAL = 17;       // telas de pergunta do quiz (step 0..16)
 const QUIZ_LAST  = '16';     // step da última pergunta (= quiz concluído)
@@ -389,6 +389,7 @@ function norm(r){
     fbp:g('fbp'), fbc:g('fbc'),
     logo_ab:g('logo_ab'),
     price_ab:String(g('price_ab')||''),
+    ab:String(g('ab')||''),                 // variante do A/B de preço (a/b)
     utm_source:qs.utm_source||'', utm_medium:qs.utm_medium||'', utm_campaign:qs.utm_campaign||'',
     utm_content:qs.utm_content||'', utm_adset:qs.utm_adset||'',
     device:deviceFrom(ua), browser:browserFrom(ua), os:osFrom(ua)
@@ -446,17 +447,26 @@ function metricsPrev(){ return metricsFor(_evPrev,_vendasPrev); }
 
 /* ====================== AUTH (hash + expiração 12h) ====================== */
 (function checkSession(){
+  let ok=false;
   try{
     const s = JSON.parse(localStorage.getItem(SESSK)||'null');
-    if(s && s.h===PWD_HASH && s.exp>Date.now()){ openDash(); return; }
+    ok = !!(s && s.h===PWD_HASH && s.k && s.exp>Date.now());   // s.k = chave da API (Supabase)
   }catch(e){}
-  localStorage.removeItem(SESSK);
+  if(!ok){ localStorage.removeItem(SESSK); return; }
+  // setTimeout 0: espera o script INTEIRO carregar antes de renderizar.
+  // (funilSteps usa "let _FUNIL_STEPS" declarado mais abaixo — chamar direto
+  //  daqui dava ReferenceError de TDZ, que apagava a sessão a cada visita.)
+  setTimeout(openDash, 0);
 })();
+function apiKey(){ try{ return (JSON.parse(localStorage.getItem(SESSK)||'null')||{}).k||''; }catch(e){ return ''; } }
 $('#pwd').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 async function login(){
   const h = await sha256hex('cmm-admin|'+$('#pwd').value);
   if(h===PWD_HASH){
-    localStorage.setItem(SESSK, JSON.stringify({h:PWD_HASH, exp:Date.now()+SESSION_HOURS*3600*1000}));
+    // Chave da API derivada da senha (nunca aparece no código-fonte).
+    // O backend registra o hash dela no 1º login e passa a exigir nas leituras.
+    const k = await sha256hex('rm-api|'+$('#pwd').value);
+    localStorage.setItem(SESSK, JSON.stringify({h:PWD_HASH, k:k, exp:Date.now()+SESSION_HOURS*3600*1000}));
     openDash();
   } else { $('#gateErr').textContent='Senha incorreta. Tente novamente.'; }
 }
@@ -534,16 +544,16 @@ async function sync(manual){
     try{
       // Delta: se já temos dados locais e não é refresh manual, pedimos só o novo.
       const since = manual ? 0 : sinceTs();
-      const url = GAS+'?all=1'+(since>0 ? '&since='+since : (manual?'&fresh=1':''));
+      const url = GAS+'?all=1'+(since>0 ? '&since='+since : (manual?'&fresh=1':''))+'&key='+encodeURIComponent(apiKey());
       const j = await fetch(url).then(r=>r.json());
       let evRaw, veRaw, caRaw, isDelta=false;
       if(j && !Array.isArray(j) && (j.eventos||j.vendas||j.capi_log||j.delta)){
         evRaw=j.eventos||[]; veRaw=j.vendas||[]; caRaw=j.capi_log||[]; isDelta=!!j.delta;
       }else{
         const [a,b,c] = await Promise.all([
-          Array.isArray(j)?Promise.resolve(j):fetch(GAS).then(r=>r.json()).catch(()=>[]),
-          fetch(GAS+'?sheet=vendas').then(r=>r.json()).catch(()=>[]),
-          fetch(GAS+'?sheet=capi_log').then(r=>r.json()).catch(()=>[])
+          Array.isArray(j)?Promise.resolve(j):fetch(GAS+'?key='+encodeURIComponent(apiKey())).then(r=>r.json()).catch(()=>[]),
+          fetch(GAS+'?sheet=vendas&key='+encodeURIComponent(apiKey())).then(r=>r.json()).catch(()=>[]),
+          fetch(GAS+'?sheet=capi_log&key='+encodeURIComponent(apiKey())).then(r=>r.json()).catch(()=>[])
         ]);
         evRaw=extract(a); veRaw=extract(b); caRaw=extract(c);
       }
@@ -1570,7 +1580,7 @@ async function resetData(){
   if(!confirm('Tem certeza absoluta? Esta ação não pode ser desfeita.')) return;
   try{
     if(GAS && !/COLE_AQUI/.test(GAS)){
-      await fetch(GAS,{method:'POST',body:JSON.stringify({action:'reset'})}).catch(()=>{});
+      await fetch(GAS,{method:'POST',body:JSON.stringify({action:'reset', key:apiKey()})}).catch(()=>{});
     }
   }catch(e){}
   localStorage.removeItem(KEY); localStorage.removeItem(CKEY);
