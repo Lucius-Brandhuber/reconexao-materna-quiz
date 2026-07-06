@@ -16,7 +16,7 @@
 
 /* ====================== CONFIG ====================== */
 // Pixel da Meta (deixe vazio se ainda não usa Pixel/CAPI).
-var PIXEL_ID   = '';
+var PIXEL_ID   = '1458594179419127';
 // Gere em: Gerenciador de Eventos > Configurações > Conversions API > Gerar token.
 // Sem token, os eventos são salvos normalmente; só o envio server-side fica off.
 var CAPI_TOKEN = 'COLE_AQUI_O_TOKEN_DA_CONVERSIONS_API';

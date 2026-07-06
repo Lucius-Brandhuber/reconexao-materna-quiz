@@ -25,10 +25,15 @@
     try{ fetch(GAS, { method:'POST', mode:'no-cors', keepalive:true, headers:{'Content-Type':'text/plain;charset=UTF-8'}, body: JSON.stringify(e) }); }catch(x){}
   }
 
+  /* dispara evento padrão da Meta (Pixel) se ele estiver carregado na página */
+  function fbTrack(ev, p){ if(window.fbq){ try{ fbq('track', ev, p||{}); }catch(x){} } }
+
   window.rmTrack = {
-    view:     function(step){ if(seen('v'+step)) return; send('view', {step:step}); },
+    view:     function(step){ if(seen('v'+step)) return; send('view', {step:step});
+                 if(String(step)==='diagnostico') fbTrack('Lead');            // concluiu o quiz
+                 else if(String(step)==='pv')      fbTrack('ViewContent'); }, // abriu a página de vendas
     answer:   function(step,text,ms){ send('answer', {step:step, ans:text, ms:ms}); },
     click:    function(step,label,ms){ send('click', {step:step, name:label||'Botão', ms:ms}); },
-    checkout: function(label){ send('checkout_click', {name:label||'CTA'}); }
+    checkout: function(label){ send('checkout_click', {name:label||'CTA'}); fbTrack('InitiateCheckout'); }
   };
 })();
