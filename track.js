@@ -28,6 +28,24 @@
   /* dispara evento padrão da Meta (Pixel) se ele estiver carregado na página */
   function fbTrack(ev, p){ if(window.fbq){ try{ fbq('track', ev, p||{}); }catch(x){} } }
 
+  /* ---- UTMs: captura na entrada, persiste e repassa pelo funil (Utmify) ---- */
+  function utmRelevant(k){ k=(k||'').toLowerCase(); return /^utm_/.test(k) || ['fbclid','gclid','ttclid','sck','src','xcod','utm_id'].indexOf(k)>-1; }
+  function utmCapture(){
+    try{
+      var cur={}, p=new URLSearchParams(location.search);
+      p.forEach(function(v,k){ if(v && utmRelevant(k)) cur[k]=v; });
+      var hasNew=false; for(var n in cur){ if(/^utm_/i.test(n)){ hasNew=true; break; } }
+      if(hasNew){ localStorage.setItem('rm_utms', JSON.stringify(cur)); return cur; }   // clique novo = last-click
+      var stored={}; try{ stored=JSON.parse(localStorage.getItem('rm_utms')||'{}'); }catch(e){}
+      for(var j in cur) stored[j]=cur[j];
+      return stored;
+    }catch(x){ return {}; }
+  }
+  var _utms = utmCapture();
+  function utmQS(){ var a=[]; for(var k in _utms){ if(_utms[k]!=null && _utms[k]!==''){ a.push(encodeURIComponent(k)+'='+encodeURIComponent(_utms[k])); } } return a.join('&'); }
+  function utmAppend(url){ var qs=utmQS(); if(!qs||!url) return url; var hash='',h=url.indexOf('#'); if(h>-1){ hash=url.slice(h); url=url.slice(0,h); } url += (url.indexOf('?')>-1?'&':'?')+qs; return url+hash; }
+  window.rmUtm = { get:function(){ return _utms; }, qs:utmQS, append:utmAppend };
+
   window.rmTrack = {
     view:     function(step){ if(seen('v'+step)) return; send('view', {step:step});
                  if(String(step)==='diagnostico') fbTrack('Lead');            // concluiu o quiz

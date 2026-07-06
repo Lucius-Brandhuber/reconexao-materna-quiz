@@ -23,6 +23,16 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+<!-- Utmify Pixel -->
+<script>
+  window.pixelId = "6a4b12f98aff720594663d7d";
+  var a = document.createElement("script");
+  a.setAttribute("async", "");
+  a.setAttribute("defer", "");
+  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+  document.head.appendChild(a);
+</script>
+<!-- End Utmify Pixel -->
 <link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -600,7 +610,7 @@ function rTrans(s, box){
     +'<div class="tr-proof"><span class="pn">💛</span><span class="pt">Mais de 40 mil mães já começaram essa reconexão.</span></div>';
 
   const b=document.createElement('button'); b.className='cta'; b.textContent='SIM, QUERO VER MINHA SOLUÇÃO →';
-  b.onclick=()=>{ if(window.rmTrack) rmTrack.click('cta_pv','SIM, QUERO VER MINHA SOLUÇÃO', Date.now()-_rmT0); if(PV_URL && PV_URL!=='#'){ window.location.href=PV_URL; } else { b.textContent='➡️ Configure a URL da Página de Vendas'; } };
+  b.onclick=()=>{ if(window.rmTrack) rmTrack.click('cta_pv','SIM, QUERO VER MINHA SOLUÇÃO', Date.now()-_rmT0); if(PV_URL && PV_URL!=='#'){ window.location.href = (window.rmUtm ? rmUtm.append(PV_URL) : PV_URL); } else { b.textContent='➡️ Configure a URL da Página de Vendas'; } };
   box.appendChild(b);
 
   const sub=document.createElement('div'); sub.className='tr-ctasub'; sub.textContent='A sua leitura personalizada te espera na próxima página.'; box.appendChild(sub);

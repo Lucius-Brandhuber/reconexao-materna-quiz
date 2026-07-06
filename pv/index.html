@@ -346,7 +346,10 @@ src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
       var href = a.getAttribute('href') || '';
       var label = (a.textContent || '').trim().replace(/\s+/g,' ').slice(0,50);
       if(href.charAt(0) === '#'){ a.addEventListener('click', function(){ rmTrack.click('oferta', label); }); }
-      else { a.addEventListener('click', function(){ rmTrack.checkout(label); }); }
+      else {
+        if(window.rmUtm){ a.href = rmUtm.append(href); }   // repassa os UTMs pro checkout
+        a.addEventListener('click', function(){ rmTrack.checkout(label); });
+      }
     });
   }
 </script>
