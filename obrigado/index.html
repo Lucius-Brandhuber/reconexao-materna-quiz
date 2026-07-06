@@ -124,16 +124,8 @@ document.head.appendChild(a);})();</script>
 
   <script>
   (function(){
-    // Purchase (Meta Pixel) — dispara 1x. Valor/pedido podem vir da URL (?valor=29.90&pedido=123)
-    try{
-      var q=new URLSearchParams(location.search);
-      var val=parseFloat((q.get('valor')||q.get('value')||'29.90').replace(',','.'))||29.90;
-      var oid=q.get('pedido')||q.get('order')||q.get('transaction_id')||'';
-      if(window.fbq && !sessionStorage.getItem('rm_purchase_fired')){
-        fbq('track','Purchase',{value:val,currency:'BRL',content_name:'Reconexão Materna — As 3 Camadas'});
-        sessionStorage.setItem('rm_purchase_fired','1');
-      }
-    }catch(e){}
+    // Purchase é disparado pela PRÓPRIA Payt (com o Pixel dela) — NÃO disparamos aqui
+    // para não duplicar a conversão. Mantemos só o PageView (base) para retargeting.
     // Abrir e-mail: tenta o webmail mais comum
     var mb=document.getElementById('mailBtn');
     if(mb) mb.addEventListener('click',function(ev){ev.preventDefault();
