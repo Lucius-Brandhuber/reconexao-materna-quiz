@@ -116,25 +116,44 @@
   .dots span{width:8px;height:8px;border-radius:50%;background:#dcd0e4}
   .dots span.on{background:var(--purple)}
 
-  /* diagnosis */
-  .warn{display:block;text-align:center;background:#fff4f4;color:#c0392b;font-weight:900;font-size:14px;padding:9px;border-radius:10px;margin-bottom:4px;letter-spacing:.3px}
-  .warnsub{text-align:center;color:#9a9aa0;font-size:12px;margin-bottom:16px}
-  .diag-img{width:100%;max-width:340px;display:block;margin:6px auto 18px;border-radius:16px;box-shadow:0 8px 22px rgba(0,0,0,.10)}
-  .figure{display:flex;justify-content:center;margin:6px 0 18px}
-  .layers{display:flex;flex-direction:column;gap:10px;margin:6px 0 18px}
-  .layer{display:flex;align-items:center;gap:13px;border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;background:#fff}
-  .layer .n{flex:none;width:30px;height:30px;border-radius:9px;background:var(--lav);color:var(--purple);font-weight:900;display:flex;align-items:center;justify-content:center}
-  .layer .t{font-weight:800;font-size:15px}
-  .layer .d{font-size:12.5px;color:var(--muted)}
-  .layer.hot{border-color:var(--terra);background:#fbf1ec;box-shadow:0 6px 16px rgba(192,106,69,.14)}
-  .layer.hot .n{background:var(--terra);color:#fff}
-  .dtext{font-size:15px;line-height:1.6;color:#2a2a2e}
-  .dtext b{color:#111}
-  .dtext .big{font-weight:900;font-size:17px;display:block;margin-bottom:8px}
-  .dbullets{list-style:none;padding:0;margin:14px 0}
-  .dbullets li{padding:7px 0;padding-left:26px;position:relative;font-size:14.5px}
-  .dbullets li:before{content:"✅";position:absolute;left:0}
-  .calm{text-align:center;font-weight:800;color:var(--purple);margin:16px 0 12px;font-size:15px}
+  /* ===== diagnóstico (reformulado) ===== */
+  .dx-badgewrap{display:flex;justify-content:center;margin-bottom:6px}
+  .dx-badge{display:inline-flex;align-items:center;gap:7px;background:#fdecef;color:#c0295a;font-weight:900;font-size:12.5px;letter-spacing:.4px;padding:9px 16px;border-radius:999px;text-transform:uppercase}
+  .dx-disc{text-align:center;color:#a89aa2;font-size:11.5px;margin-bottom:14px}
+  .dx-img{width:100%;max-width:330px;display:block;margin:2px auto 5px;border-radius:18px;box-shadow:0 10px 26px rgba(0,0,0,.12)}
+  .dx-imgcap{text-align:center;font-size:11.5px;color:#9a9aa0;font-style:italic;margin-bottom:18px}
+  .dx-head{font-size:22px;font-weight:900;line-height:1.25;text-align:center;color:#141416;margin:4px 0 8px}
+  .dx-lead{font-size:15px;line-height:1.6;color:#3a3a40;text-align:center;margin-bottom:18px}
+  .dx-lead b{color:#141416}
+  .dx-card{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:15px 16px;margin-bottom:16px;box-shadow:0 6px 18px rgba(120,60,130,.06)}
+  .dx-card>.h{display:flex;align-items:center;gap:9px;font-weight:900;font-size:14.5px;margin-bottom:12px;color:#1c1c1e}
+  .dx-card>.h .ic{width:28px;height:28px;border-radius:9px;background:var(--lav);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+  .finds{display:flex;flex-direction:column;gap:9px}
+  .find{display:flex;align-items:center;gap:11px;background:#faf6fb;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .find .fic{width:32px;height:32px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;background:#fdecef}
+  .find .ft{font-weight:800;font-size:13.5px;color:#2a2a2e;line-height:1.2}
+  .find .fs{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .cams{display:flex;flex-direction:column;gap:10px}
+  .cam{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1.5px solid var(--line);border-radius:14px;background:#fff}
+  .cam .cn{width:34px;height:34px;border-radius:10px;flex:none;background:var(--lav);color:var(--purple);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center}
+  .cam .ct{font-weight:800;font-size:14.5px;color:#2a2a2e;display:flex;align-items:center;gap:7px;flex-wrap:wrap;line-height:1.2}
+  .cam .cd{font-size:12px;color:var(--muted);margin-top:2px}
+  .cam.hot{border-color:var(--terra);background:linear-gradient(160deg,#fdf3ec,#fbe8df)}
+  .cam.hot .cn{background:var(--terra);color:#fff}
+  .cam.hot .ct{color:#a8532e}
+  .camtag{background:var(--terra);color:#fff;font-size:9.5px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+  .prio{background:linear-gradient(160deg,#fdf3ec,#fbe6db);border:1.5px solid #edb79c;border-radius:16px;padding:14px 16px;margin-bottom:16px}
+  .prio .ph{display:flex;align-items:center;gap:7px;font-weight:900;font-size:12px;letter-spacing:.4px;text-transform:uppercase;color:var(--terra);margin-bottom:6px}
+  .prio p{font-size:14.5px;line-height:1.55;color:#3f312b;margin:0}
+  .prio p b{color:#8a3f1f}
+  .why{background:#faf6fb;border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:6px}
+  .why .wh{font-weight:900;font-size:14px;color:#1c1c1e;margin-bottom:9px}
+  .why ul{list-style:none;padding:0;margin:0}
+  .why li{position:relative;padding:6px 0 6px 28px;font-size:13.8px;color:#3a3a40;line-height:1.4}
+  .why li:before{content:"✕";position:absolute;left:0;top:5px;width:19px;height:19px;background:#fdecef;color:#c0295a;border-radius:50%;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center}
+  .why li.key{font-weight:800;color:#1c1c1e}
+  .why li.key:before{content:"→";background:#efe4f5;color:var(--purple)}
+  .dx-calm{text-align:center;font-weight:800;color:var(--purple);margin:18px 0 12px;font-size:15.5px;line-height:1.4}
 
   /* transition */
   .tr-img{width:100%;max-width:320px;border-radius:20px;display:block;margin:6px auto 18px;box-shadow:0 12px 30px rgba(160,33,166,.16)}
@@ -167,7 +186,9 @@
     .cta,.cont{padding:16px;font-size:15.5px}
     .cimg{height:230px}
     .tr-lead{font-size:19px}
-    .dtext .big{font-size:16px}
+    .dx-head{font-size:20px}
+    .dx-card{padding:14px}
+    .dx-img{max-width:100%}
   }
   /* ===== celulares grandes (≥430px) ===== */
   @media (min-width:430px){
@@ -474,36 +495,62 @@ function pickCamada(){
   return 'core';
 }
 function rDiag(s, box){
-  const camada=pickCamada();
+  const camada=pickCamada();                       // 'assoalho' | 'core' | 'postura'
   const r=A.rotina||[];
   const desincha = r.includes('Barriga que incha e marca na roupa no fim do dia')||r.includes('Intestino preso / dificuldade de ir ao banheiro');
   const cesarea = A.parto==='Cesárea'||A.parto==='Os dois';
 
-  box.innerHTML='<div class="warn">⚠️ SUA LEITURA DE RECONEXÃO ⚠️</div>'
-    +'<div class="warnsub">leitura de bem-estar baseada nas suas respostas — não é diagnóstico médico</div>'
-    +'<img class="diag-img" src="assets/diagnostico.jpg" alt="" loading="lazy">';
+  // qual das 3 camadas destacar como prioridade (assoalho/core → camada 2, postura → 3)
+  const hot = (camada==='postura') ? 3 : 2;
+  const camNames = [
+    {t:'Respiração', d:'o reset do diafragma'},
+    {t:'Core profundo', d:'transverso + assoalho pélvico'},
+    {t:'Postura', d:'o alinhamento que sustenta'}
+  ];
+  const camsHTML = camNames.map((c,i)=>{
+    const n=i+1, isHot=(n===hot);
+    return '<div class="cam'+(isHot?' hot':'')+'"><span class="cn">'+n+'</span><div><div class="ct">'+c.t+(isHot?' <span class="camtag">sua prioridade</span>':'')+'</div><div class="cd">'+c.d+'</div></div></div>';
+  }).join('');
 
-  let camTxt='';
-  if(camada==='assoalho') camTxt='No seu caso, a camada que mais pede atenção é o <b>assoalho pélvico</b> — é o que está por trás do escape de xixi e do desconforto que você marcou.';
-  else if(camada==='postura') camTxt='No seu caso, a <b>postura</b> entrou no "padrão da gestação" e puxou o resto do corpo junto — daí as dores e a barriga que insiste em ficar.';
-  else camTxt='No seu caso, a camada que mais pede atenção é o <b>core profundo (transverso)</b> — é o que faz a barriga projetar e some com a sustentação, mesmo você estando no peso.';
-  if(cesarea) camTxt+=' Depois de uma cesárea, esse core profundo costuma pedir uma reconexão ainda mais cuidadosa.';
-  if(desincha) camTxt+=' E tem um eixo de <b>desinchar</b> (intestino e retenção) que já dá pra destravar nos primeiros dias.';
+  // explicação personalizada
+  let prioT='';
+  if(camada==='assoalho') prioT='A camada que mais pede atenção é o <b>assoalho pélvico</b> (dentro do core profundo) — é o que está por trás do escape de xixi e do desconforto que você marcou.';
+  else if(camada==='postura') prioT='A sua <b>postura</b> entrou no "padrão da gestação" e puxou o resto do corpo junto — daí as dores e a barriga que insiste em ficar.';
+  else prioT='A camada que mais pede atenção é o <b>core profundo (transverso)</b> — é o que faz a barriga projetar e some com a sustentação, mesmo você estando no peso.';
+  if(cesarea) prioT+=' Depois de uma cesárea, ele costuma pedir uma reconexão ainda mais cuidadosa.';
+  if(desincha) prioT+=' E tem um eixo de <b>desinchar</b> (intestino e retenção) que já dá pra destravar nos primeiros dias.';
 
-  const dt=document.createElement('div'); dt.className='dtext';
-  dt.innerHTML='<span class="big">A questão nunca foi força de vontade.</span>'
-    +'Suas respostas apontam um conjunto de alterações que a gestação deixou — <b>diástase abdominal</b>, <b>enfraquecimento do assoalho pélvico</b> e <b>acúmulo de gordura na barriga</b>.'
-    +'<br><br>A raiz de tudo isso? As <b>3 camadas</b> que sustentam a sua barriga — respiração, core profundo e postura — <b>desconectaram</b> durante a gestação, e ninguém te ensinou a religá-las na ordem certa.'
-    +'<br><br>'+camTxt;
-  box.appendChild(dt);
+  box.innerHTML=
+    '<div class="dx-badgewrap"><span class="dx-badge">⚠️ Sua leitura de reconexão</span></div>'
+    +'<div class="dx-disc">leitura de bem-estar baseada nas suas respostas — não é diagnóstico médico</div>'
+    +'<img class="dx-img" src="assets/diagnostico.jpg" alt="" loading="lazy">'
+    +'<div class="dx-imgcap">O que a gestação deixou nas suas 3 camadas</div>'
 
-  const ul=document.createElement('ul'); ul.className='dbullets';
-  ul.innerHTML='<li>Dieta e academia não religam essas camadas</li>'
-    +'<li>Abdominal comum, com afastamento, pode até acentuar</li>'
-    +'<li>Faltava a ordem certa: respiração → core profundo → postura</li>';
-  box.appendChild(ul);
+    +'<div class="dx-head">A questão nunca foi força de vontade.</div>'
+    +'<div class="dx-lead">Suas respostas apontam um conjunto de alterações que a gestação deixou — e todas se conectam num único ponto.</div>'
 
-  const calm=document.createElement('div'); calm.className='calm'; calm.textContent='👇 Mas calma: isso tem um caminho — e ele é simples.'; box.appendChild(calm);
+    +'<div class="dx-card"><div class="h"><span class="ic">🔎</span>O que apareceu na sua leitura</div>'
+      +'<div class="finds">'
+        +'<div class="find"><span class="fic">〰️</span><div><div class="ft">Diástase abdominal</div><div class="fs">afastamento no meio da barriga</div></div></div>'
+        +'<div class="find"><span class="fic">🔻</span><div><div class="ft">Assoalho pélvico enfraquecido</div><div class="fs">a sustentação de dentro pra fora</div></div></div>'
+        +'<div class="find"><span class="fic">🟠</span><div><div class="ft">Acúmulo de gordura na barriga</div><div class="fs">que dieta sozinha não resolve</div></div></div>'
+      +'</div></div>'
+
+    +'<div class="dx-lead" style="text-align:left;margin:0 2px 14px">A raiz de tudo isso? As <b>3 camadas</b> que sustentam a sua barriga — respiração, core profundo e postura — <b>desconectaram</b> na gestação, e ninguém te ensinou a religá-las na ordem certa.</div>'
+
+    +'<div class="dx-card"><div class="h"><span class="ic">🧩</span>As 3 camadas da sua reconexão</div>'
+      +'<div class="cams">'+camsHTML+'</div></div>'
+
+    +'<div class="prio"><div class="ph">📍 No seu caso</div><p>'+prioT+'</p></div>'
+
+    +'<div class="why"><div class="wh">Por que não funcionou até agora</div><ul>'
+      +'<li>Dieta e academia não religam essas camadas</li>'
+      +'<li>Abdominal comum, com afastamento, pode até acentuar</li>'
+      +'<li class="key">O que faltava: a ordem certa — respiração → core profundo → postura</li>'
+    +'</ul></div>'
+
+    +'<div class="dx-calm">👇 Mas calma: isso tem um caminho — e ele é simples.</div>';
+
   const b=document.createElement('button'); b.className='cta'; b.textContent='CONTINUAR PARA MINHA SOLUÇÃO'; b.onclick=next; box.appendChild(b);
 }
 
