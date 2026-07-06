@@ -2,8 +2,8 @@
    Gera session id, dispara view / answer / click / checkout_click para o GAS e
    mantém backup local. Usa fetch no-cors + text/plain (evita preflight CORS). */
 (function(){
-  /* >>> COLE AQUI a URL /exec do seu Web App do Apps Script (ver gas/README.md) */
-  var GAS = 'COLE_AQUI_A_URL_DO_GAS';
+  /* URL /exec do Web App do Apps Script (backend de analytics) */
+  var GAS = 'https://script.google.com/macros/s/AKfycbyac9JB4LWmOcudz-l7ifNrrcBV9-wpClgiw0RoYlL7uHUB8i_NBtwXo53DINSF4BCi/exec';
 
   function uid(){ return 'xxxxxxxx'.replace(/x/g,function(){return (Math.random()*16|0).toString(16);})+Date.now().toString(36); }
   function sid(){ var k='rm_sid'; var v=localStorage.getItem(k); if(!v){ v=uid(); localStorage.setItem(k,v); } return v; }
