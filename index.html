@@ -155,16 +155,25 @@
   .why li.key:before{content:"→";background:#efe4f5;color:var(--purple)}
   .dx-calm{text-align:center;font-weight:800;color:var(--purple);margin:18px 0 12px;font-size:15.5px;line-height:1.4}
 
-  /* transition */
-  .tr-img{width:100%;max-width:320px;border-radius:20px;display:block;margin:6px auto 18px;box-shadow:0 12px 30px rgba(160,33,166,.16)}
-  .tr-lead{font-size:20px;font-weight:900;text-align:center;line-height:1.3;margin-bottom:12px}
-  .tr-body{font-size:15px;line-height:1.6;color:#2a2a2e}
-  .tr-body b{color:#111}
-  .feat{list-style:none;padding:0;margin:16px 0}
-  .feat li{padding:8px 0;font-size:14.5px;display:flex;gap:10px;align-items:flex-start}
-  .feat li span{flex:none}
-  .comp{background:#f7f4f9;border-left:3px solid var(--lav-b);border-radius:8px;padding:11px 13px;font-size:12px;color:#7a7a80;line-height:1.5;margin:14px 0}
-  .proofline{text-align:center;font-weight:800;color:#333;margin:14px 0;font-size:15px}
+  /* ===== transição / solução (reformulado) ===== */
+  .tr-badgewrap{display:flex;justify-content:center;margin-bottom:12px}
+  .tr-badge{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(160deg,#f3e3f7,#ecd2f0);color:var(--purple-d);font-weight:900;font-size:12.5px;letter-spacing:.4px;padding:9px 16px;border-radius:999px;text-transform:uppercase}
+  .tr-img{width:100%;max-width:300px;border-radius:20px;display:block;margin:2px auto 8px;box-shadow:0 14px 34px rgba(160,33,166,.18)}
+  .tr-cap{text-align:center;font-size:12.5px;color:var(--muted);margin-bottom:16px}
+  .tr-cap b{color:var(--purple-d);font-weight:800}
+  .tr-lead{font-size:21px;font-weight:900;text-align:center;line-height:1.28;margin-bottom:12px;color:#141416}
+  .tr-body{font-size:15px;line-height:1.6;color:#3a3a40;text-align:center;margin-bottom:18px}
+  .tr-body b{color:#141416}
+  .tf-list{display:flex;flex-direction:column;gap:10px}
+  .tf{display:flex;align-items:center;gap:12px;background:#faf6fb;border:1px solid var(--line);border-radius:13px;padding:11px 13px}
+  .tf .tic{width:36px;height:36px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--lav)}
+  .tf .tt{font-weight:800;font-size:14px;color:#2a2a2e;line-height:1.2}
+  .tf .td{font-size:12px;color:var(--muted);margin-top:2px}
+  .tr-proof{display:flex;align-items:center;gap:11px;background:linear-gradient(160deg,#fdf3ec,#fbe6db);border:1.5px solid #edb79c;border-radius:16px;padding:13px 15px;margin:16px 0}
+  .tr-proof .pn{font-size:22px;flex:none;line-height:1}
+  .tr-proof .pt{font-size:13.8px;font-weight:800;color:#8a3f1f;line-height:1.3}
+  .tr-ctasub{text-align:center;font-size:12.5px;color:var(--muted);margin-top:11px}
+  .comp{background:#f7f4f9;border:1px solid #eadff0;border-radius:12px;padding:12px 14px;font-size:12px;color:#7a7a80;line-height:1.5;margin:16px 0 0}
 
   /* ===== celulares pequenos (≤360px) ===== */
   @media (max-width:360px){
@@ -556,21 +565,28 @@ function rDiag(s, box){
 
 /* ---- transition ---- */
 function rTrans(s, box){
-  const img=document.createElement('img'); img.className='tr-img'; img.src='assets/autora-guia.jpg'; img.alt=''; box.appendChild(img);
-  const lead=document.createElement('div'); lead.className='tr-lead'; lead.textContent='Não é força de vontade que falta. É reconexão — na ordem certa.'; box.appendChild(lead);
-  const body=document.createElement('div'); body.className='tr-body';
-  body.innerHTML='Reunimos isso no <b>Método Reconexão Materna: as 3 Camadas</b> — respiração, core profundo e postura em <b>10 minutos por dia</b>, em casa, do jeito <b>seguro pra quem teve filho</b>.';
-  box.appendChild(body);
-  const feat=document.createElement('ul'); feat.className='feat';
-  feat.innerHTML='<li><span>⏱️</span> Cabe na rotina de mãe: 10 minutos por dia</li>'
-    +'<li><span>🎧</span> Áudios guiados pra fazer de olhos fechados, até com o bebê no colo</li>'
-    +'<li><span>💧</span> Nos primeiros 7 dias você já sente a barriga desinchar</li>'
-    +'<li><span>🛡️</span> Sempre com liberação médica/obstétrica</li>';
-  box.appendChild(feat);
-  const pl=document.createElement('div'); pl.className='proofline'; pl.innerHTML='Mais de <b>40 mil mães</b> já começaram essa reconexão.'; box.appendChild(pl);
+  box.innerHTML=
+    '<div class="tr-badgewrap"><span class="tr-badge">✨ A sua solução</span></div>'
+    +'<img class="tr-img" src="assets/autora-guia.jpg" alt="">'
+    +'<div class="tr-cap">Com <b>Sophia</b> — criadora do Método Reconexão Materna</div>'
+    +'<div class="tr-lead">Não é força de vontade que falta. É reconexão — na ordem certa.</div>'
+    +'<div class="tr-body">Reunimos tudo isso no <b>Método Reconexão Materna: as 3 Camadas</b> — respiração, core profundo e postura, em casa, do jeito <b>seguro pra quem teve filho</b>.</div>'
+
+    +'<div class="dx-card"><div class="h"><span class="ic">🌸</span>Como funciona a sua reconexão</div>'
+      +'<div class="tf-list">'
+        +'<div class="tf"><span class="tic">⏱️</span><div><div class="tt">10 minutos por dia</div><div class="td">cabe na rotina de mãe, sem academia</div></div></div>'
+        +'<div class="tf"><span class="tic">🎧</span><div><div class="tt">Áudios guiados</div><div class="td">faça de olhos fechados, até com o bebê no colo</div></div></div>'
+        +'<div class="tf"><span class="tic">💧</span><div><div class="tt">Desinchar já nos primeiros 7 dias</div><div class="td">a barriga começa a responder rápido</div></div></div>'
+        +'<div class="tf"><span class="tic">🛡️</span><div><div class="tt">Seguro no pós-parto</div><div class="td">sempre com liberação médica/obstétrica</div></div></div>'
+      +'</div></div>'
+
+    +'<div class="tr-proof"><span class="pn">💛</span><span class="pt">Mais de 40 mil mães já começaram essa reconexão.</span></div>';
+
   const b=document.createElement('button'); b.className='cta'; b.textContent='SIM, QUERO VER MINHA SOLUÇÃO →';
   b.onclick=()=>{ if(window.rmTrack) rmTrack.click('cta_pv','SIM, QUERO VER MINHA SOLUÇÃO', Date.now()-_rmT0); if(PV_URL && PV_URL!=='#'){ window.location.href=PV_URL; } else { b.textContent='➡️ Configure a URL da Página de Vendas'; } };
   box.appendChild(b);
+
+  const sub=document.createElement('div'); sub.className='tr-ctasub'; sub.textContent='A sua leitura personalizada te espera na próxima página.'; box.appendChild(sub);
   const comp=document.createElement('div'); comp.className='comp'; comp.textContent='Movimento de bem-estar e reconexão, não prescrição. Pare se sentir dor ou desconforto. Cada corpo e cada parto são únicos — resultados variam.'; box.appendChild(comp);
 }
 
