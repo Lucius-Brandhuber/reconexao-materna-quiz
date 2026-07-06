@@ -33,15 +33,17 @@
       step: (p.step!=null ? p.step : ''),
       name: p.name||'', ans: p.ans||'', ms: p.ms||0,
       ref: document.referrer||'', ua: navigator.userAgent, url: location.href,
-      event_id: uid(), fbp: cookie('_fbp'), fbc: cookie('_fbc'), ab: _ab
+      event_id: p.event_id || uid(), fbp: cookie('_fbp'), fbc: cookie('_fbc'), ab: _ab
     };
     backup(e);
     if(!GAS || /COLE_AQUI/.test(GAS)) return;   // ainda sem backend: só backup local
     try{ fetch(GAS, { method:'POST', mode:'no-cors', keepalive:true, headers:{'Content-Type':'text/plain;charset=UTF-8'}, body: JSON.stringify(e) }); }catch(x){}
   }
 
-  /* dispara evento padrão da Meta (Pixel) se ele estiver carregado na página */
-  function fbTrack(ev, p){ if(window.fbq){ try{ fbq('track', ev, p||{}); }catch(x){} } }
+  /* dispara evento padrão da Meta (Pixel) se ele estiver carregado na página.
+     eid = MESMO event_id enviado ao backend → a CAPI (server) manda o mesmo id
+     e a Meta deduplica navegador+servidor em vez de contar em dobro. */
+  function fbTrack(ev, p, eid){ if(window.fbq){ try{ fbq('track', ev, p||{}, eid?{eventID:eid}:undefined); }catch(x){} } }
 
   /* ---- UTMs: captura na entrada, persiste e repassa pelo funil (Utmify) ---- */
   function utmRelevant(k){ k=(k||'').toLowerCase(); return /^utm_/.test(k) || ['fbclid','gclid','ttclid','sck','src','xcod','utm_id'].indexOf(k)>-1; }
@@ -62,11 +64,11 @@
   window.rmUtm = { get:function(){ return _utms; }, qs:utmQS, append:utmAppend };
 
   window.rmTrack = {
-    view:     function(step){ if(seen('v'+step)) return; send('view', {step:step});
-                 if(String(step)==='diagnostico') fbTrack('Lead');            // concluiu o quiz
-                 else if(String(step)==='pv')      fbTrack('ViewContent'); }, // abriu a página de vendas
+    view:     function(step){ if(seen('v'+step)) return; var eid=uid(); send('view', {step:step, event_id:eid});
+                 if(String(step)==='diagnostico') fbTrack('Lead', null, eid);            // concluiu o quiz
+                 else if(String(step)==='pv')      fbTrack('ViewContent', null, eid); }, // abriu a página de vendas
     answer:   function(step,text,ms){ send('answer', {step:step, ans:text, ms:ms}); },
     click:    function(step,label,ms){ send('click', {step:step, name:label||'Botão', ms:ms}); },
-    checkout: function(label){ send('checkout_click', {name:label||'CTA'}); fbTrack('InitiateCheckout', {value:(window.rmAB?rmAB.value:29.90), currency:'BRL'}); }
+    checkout: function(label){ var eid=uid(); send('checkout_click', {name:label||'CTA', event_id:eid}); fbTrack('InitiateCheckout', {value:(window.rmAB?rmAB.value:29.90), currency:'BRL'}, eid); }
   };
 })();
