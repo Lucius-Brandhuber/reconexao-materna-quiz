@@ -110,6 +110,28 @@ src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
   .card.sel .cl{background:var(--lav)}
   .card.sel .cl .rc{background:var(--purple);box-shadow:inset 0 0 0 4px #fff}
 
+  /* age cover (P1) */
+  .agehead{margin:8px 0 8px}
+  .subhead{text-align:center;color:#333;font-size:16px;line-height:1.45;margin:0 0 10px;font-weight:600}
+  .subhead b{color:var(--purple-d);font-weight:800}
+  .agehint{text-align:center;color:var(--muted);font-size:13px;font-weight:700;margin:0 0 18px}
+  .acards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .acard{position:relative;border:0;padding:0;border-radius:18px;overflow:hidden;cursor:pointer;background:#fff;
+         box-shadow:0 6px 18px rgba(160,33,166,.12);transition:transform .12s,box-shadow .15s;display:block}
+  .acard:active{transform:scale(.98)}
+  .acard>img{width:100%;height:200px;object-fit:cover;display:block}
+  .acard .aph{height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+         background:linear-gradient(160deg,#f3e6f8,#e2cbec);color:#a86bbb}
+  .acard .aph svg{width:44px;height:44px;opacity:.7}
+  .acard .aph small{font-size:11px;letter-spacing:.4px;text-transform:uppercase;opacity:.65}
+  .acard .albl{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;
+         background:var(--grad);color:#fff;font-weight:800;font-size:14.5px;padding:11px 14px}
+  .acard .achev{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);display:flex;
+         align-items:center;justify-content:center;font-size:16px;line-height:1;flex:none}
+  .acard.sel{box-shadow:0 10px 24px rgba(160,33,166,.28);outline:2.5px solid var(--purple-l);outline-offset:-2.5px}
+  .acard.sel .achev{background:#fff;color:var(--purple);border-color:#fff}
+  .agetempo{margin-top:18px}
+
   /* buttons */
   .cta,.cont{display:block;width:100%;border:0;border-radius:16px;padding:18px;font:inherit;font-weight:800;font-size:16px;
        background:var(--grad);color:#fff;cursor:pointer;box-shadow:0 8px 20px rgba(160,33,166,.28);margin-top:8px;transition:opacity .2s,transform .12s}
@@ -215,6 +237,10 @@ src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
     .gopt{padding:15px 12px;font-size:14.5px;gap:9px}
     .gopt .ring{width:20px;height:20px}
     .cards{gap:11px}
+    .acards{gap:11px}
+    .acard>img,.acard .aph{height:160px}
+    .acard .albl{font-size:13px;padding:9px 11px}
+    .subhead{font-size:15px}
     .card .ph{height:148px}
     .cards.one .ph{height:200px}
     .card .cl{padding:11px;font-size:13.5px}
@@ -255,13 +281,18 @@ const PV_URL = "pv/"; // Página de Vendas do Reconexão Materna
 
 /* ====== QUIZ DATA ====== */
 const S = [
-  {id:'tempo', type:'cover', eyebrow:'Para começarmos, me conte:',
-   q:'Quanto tempo já se passou desde a sua última gestação?',
-   img:'assets/autora-capa.jpg',
-   intro:'Autoteste rápido pra mães que já tentaram de tudo. No final: <b>sua leitura de reconexão personalizada, grátis.</b>',
-   opts:['Menos de 1 ano','1 a 5 anos','5 a 10 anos','Mais de 10 anos'],
-   info:'Faça esse teste pra ter uma leitura específica pro seu caso. Ao final você ganha seu diagnóstico grátis.',
+  {id:'idade', type:'agecover',
+   q:'Reconexão Materna pós-parto:',
+   sub:'Você vai montar um <b>plano de 10 minutos por dia</b> pra reconectar a barriga que a gestação deixou.',
+   hint:'(Selecione sua idade abaixo pra começar a gerar o seu plano)',
+   opts:[{t:'18–29 anos', img:'assets/idade-18-29.jpg'},
+         {t:'30–39 anos', img:'assets/idade-30-39.jpg'},
+         {t:'40–49 anos', img:'assets/idade-40-49.jpg'},
+         {t:'50 anos ou +', img:'assets/idade-50.jpg'}],
    tempo:'menos de 2 minutos'},
+
+  {id:'tempo', type:'single', q:'Quanto tempo já se passou desde a sua última gestação?',
+   opts:['Menos de 1 ano','1 a 5 anos','5 a 10 anos','Mais de 10 anos']},
 
   {id:'filhos', type:'single', q:'Quantos filhos você teve?',
    opts:['1 filho','2 filhos','3 ou mais']},
@@ -347,7 +378,7 @@ let idx = 0;
 const hist = [];
 
 /* ---- tracking do funil (envia pro GAS via track.js) ---- */
-const isQType = s => ['cover','single','cards','multi'].includes(s.type);
+const isQType = s => ['cover','agecover','single','cards','multi'].includes(s.type);
 const QSTEP = {}; let _qn = 0;
 S.forEach((s,i)=>{ if(isQType(s)){ _qn++; QSTEP[i]=_qn; } });
 const QUIZ_LAST = _qn;                 // nº da última pergunta (= quiz concluído)
@@ -374,7 +405,7 @@ function back(){ if(hist.length){ idx=hist.pop(); render(); } }
 backBtn.onclick = back;
 
 function setProgress(){
-  const isQ = s => ['cover','single','cards','multi'].includes(s.type);
+  const isQ = s => ['cover','agecover','single','cards','multi'].includes(s.type);
   const total = S.filter((s,i)=>isQ(s)&&visible(i)).length;
   let passed=0; for(let i=0;i<=idx;i++) if(isQ(S[i])&&visible(i)) passed++;
   const t=S[idx].type;
@@ -390,7 +421,7 @@ function render(){
   setProgress();
   const box = document.createElement('div');
   box.className = 'screen';
-  ({cover:rCover,single:rSingle,cards:rCards,multi:rMulti,loading:rLoading,proof:rProof,diagnosis:rDiag,transition:rTrans})[s.type](s, box);
+  ({cover:rCover,agecover:rAgeCover,single:rSingle,cards:rCards,multi:rMulti,loading:rLoading,proof:rProof,diagnosis:rDiag,transition:rTrans})[s.type](s, box);
   root.innerHTML=''; root.appendChild(box);
   _rmT0 = Date.now(); trackView(idx);
 }
@@ -414,6 +445,29 @@ function rCover(s, box){
   box.appendChild(g);
   const info=document.createElement('div'); info.className='infobox'; info.textContent=s.info; box.appendChild(info);
   const tm=document.createElement('div'); tm.className='tempo'; tm.innerHTML='✅ TEMPO ESTIMADO: <b>'+s.tempo+'</b> · Sua leitura é gratuita'; box.appendChild(tm);
+}
+
+/* ---- agecover (P1 estilo "selecione sua idade") ---- */
+function rAgeCover(s, box){
+  if(s.eyebrow){
+    const eb=document.createElement('div'); eb.className='eyebrow'; eb.textContent=s.eyebrow;
+    const ebw=document.createElement('div'); ebw.className='center'; ebw.appendChild(eb); box.appendChild(ebw);
+  }
+  const h=document.createElement('h2'); h.className='q agehead'; h.textContent=s.q; box.appendChild(h);
+  if(s.sub){const p=document.createElement('p');p.className='subhead';p.innerHTML=s.sub;box.appendChild(p);}
+  if(s.hint){const p=document.createElement('p');p.className='agehint';p.textContent=s.hint;box.appendChild(p);}
+  const g=document.createElement('div'); g.className='acards';
+  s.opts.forEach(o=>{
+    const label=typeof o==='string'?o:o.t; const val=typeof o==='string'?o:(o.v||o.t);
+    const c=document.createElement('button'); c.className='acard';
+    c.innerHTML = (o.img ? '<img src="'+o.img+'" alt="" loading="lazy">'
+                         : '<div class="aph">'+bodySVG+'<small>foto aqui</small></div>')
+                + '<span class="albl">'+label+'<span class="achev">›</span></span>';
+    c.onclick=()=>{A[s.id]=val; g.querySelectorAll('.acard').forEach(x=>x.classList.remove('sel')); c.classList.add('sel'); setTimeout(next,240);};
+    g.appendChild(c);
+  });
+  box.appendChild(g);
+  if(s.tempo){const tm=document.createElement('div'); tm.className='tempo agetempo'; tm.innerHTML='⏱️ Tempo médio pra ficar pronto: <b>'+s.tempo+'</b> · Sua leitura é gratuita'; box.appendChild(tm);}
 }
 
 /* ---- single ---- */
