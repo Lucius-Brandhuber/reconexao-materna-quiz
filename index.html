@@ -302,8 +302,8 @@ const PV_URL = "pv/"; // Página de Vendas do Reconexão Materna
 
 /* ====== QUIZ DATA ====== */
 const S = [
-  {type:'intro', brand:'BARRIGA QUE SOME',
-   q:'Recupere o seu abdômen em 3 dias com esses exercícios.',
+  {type:'intro',
+   q:'Recupere a sua barriga em 3 dias com esses exercícios...',
    sub:'Rotina personalizada de <b>10 minutos por dia</b> pra recuperar sua barriga, tirar a flacidez e voltar a se sentir firme — em casa, sem academia.',
    img:'assets/expert-hero.jpg',
    notif:'🔥 Restam 3 testes gratuitos hoje',
@@ -478,8 +478,7 @@ function rCover(s, box){
 
 /* ---- intro (landing de entrada) ---- */
 function rIntro(s, box){
-  if(s.brand){const eb=document.createElement('div');eb.className='center';
-    eb.innerHTML='<span class="brandeyebrow">'+s.brand+'</span>';box.appendChild(eb);}
+  if(s.notif){const n=document.createElement('div');n.className='notif nofix';n.textContent=s.notif;box.appendChild(n);}
   const h=document.createElement('h2'); h.className='q introhead'; h.textContent=s.q; box.appendChild(h);
   if(s.sub){const p=document.createElement('p');p.className='subhead';p.innerHTML=s.sub;box.appendChild(p);}
   const hero=document.createElement('div'); hero.className='introhero';
@@ -490,7 +489,6 @@ function rIntro(s, box){
     hero.appendChild(im);
   }else{ hero.classList.add('ph'); hero.innerHTML=phLbl; }
   box.appendChild(hero);
-  if(s.notif){const n=document.createElement('div');n.className='notif';n.textContent=s.notif;box.appendChild(n);}
   const b=document.createElement('button'); b.className='cta'; b.textContent=s.cta||'COMEÇAR →'; b.onclick=next; box.appendChild(b);
   if(s.trust){const t=document.createElement('div');t.className='trust';t.textContent=s.trust;box.appendChild(t);}
 }
