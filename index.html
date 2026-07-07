@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#a021a6">
-<title>Reconexão Materna — Autoteste</title>
+<title>Barriga Que Some — Autoteste</title>
 <meta name="description" content="Descubra qual das 3 camadas do seu corpo precisa ser reconectada depois da gestação.">
 <!-- Meta Pixel Code -->
 <script>
@@ -109,6 +109,25 @@ src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
   .card.sel{border-color:var(--purple-l);box-shadow:0 8px 20px rgba(160,33,166,.18)}
   .card.sel .cl{background:var(--lav)}
   .card.sel .cl .rc{background:var(--purple);box-shadow:inset 0 0 0 4px #fff}
+
+  /* intro (landing de entrada) */
+  .brandeyebrow{display:inline-block;background:var(--grad);color:#fff;font-weight:900;font-size:12px;
+       letter-spacing:1.5px;padding:6px 14px;border-radius:999px;margin:2px auto 12px}
+  .introhead{margin:2px 0 10px}
+  .introhero{position:relative;border-radius:20px;overflow:hidden;margin:8px 0 16px;
+       box-shadow:0 12px 30px rgba(160,33,166,.16);background:#fff}
+  .introhero img{width:100%;height:300px;object-fit:cover;display:block}
+  .introhero.ph{height:300px;display:flex;align-items:center;justify-content:center;
+       background:linear-gradient(160deg,#f3e6f8,#e2cbec)}
+  .introhero .phlbl{display:flex;flex-direction:column;align-items:center;gap:8px;color:#a86bbb}
+  .introhero .phlbl svg{width:52px;height:52px;opacity:.7}
+  .introhero .phlbl small{font-size:11px;letter-spacing:.4px;text-transform:uppercase;opacity:.65}
+  .notif{display:flex;align-items:center;justify-content:center;gap:8px;
+       background:linear-gradient(160deg,#fdf3ec,#fbe0d0);border:1.5px solid #edb79c;color:#a8532e;
+       font-weight:800;font-size:14px;padding:12px 16px;border-radius:12px;margin:0 0 16px;
+       animation:notifpulse 2.2s ease-in-out infinite}
+  @keyframes notifpulse{0%,100%{box-shadow:0 0 0 0 rgba(192,106,69,.28)}50%{box-shadow:0 0 0 7px rgba(192,106,69,0)}}
+  .trust{text-align:center;color:var(--muted);font-size:13px;font-weight:700;margin-top:12px}
 
   /* age cover (P1) */
   .agehead{margin:8px 0 8px}
@@ -237,6 +256,8 @@ src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
     .gopt{padding:15px 12px;font-size:14.5px;gap:9px}
     .gopt .ring{width:20px;height:20px}
     .cards{gap:11px}
+    .introhero img,.introhero.ph{height:240px}
+    .notif{font-size:13px;padding:11px 13px}
     .acards{gap:11px}
     .acard>img,.acard .aph{height:160px}
     .acard .albl{font-size:13px;padding:9px 11px}
@@ -266,7 +287,7 @@ src="https://www.facebook.com/tr?id=1458594179419127&ev=PageView&noscript=1"
 </head>
 <body>
 <div class="app">
-  <div class="logohdr"><img src="assets/logo.png" alt="Reconexão Materna"></div>
+  <div class="logohdr"><img src="assets/logo.png" alt="Barriga Que Some"></div>
   <div class="top">
     <button class="back" id="back" aria-label="Voltar">←</button>
     <div class="prog"><i id="progbar"></i></div>
@@ -281,9 +302,16 @@ const PV_URL = "pv/"; // Página de Vendas do Reconexão Materna
 
 /* ====== QUIZ DATA ====== */
 const S = [
+  {type:'intro', brand:'BARRIGA QUE SOME',
+   q:'Recupere o seu abdômen em 3 dias com esses exercícios.',
+   sub:'Rotina personalizada de <b>10 minutos por dia</b> pra recuperar sua barriga, tirar a flacidez e voltar a se sentir firme — em casa, sem academia.',
+   img:'assets/expert-hero.jpg',
+   notif:'🔥 Restam 3 testes gratuitos hoje',
+   cta:'COMEÇAR TESTE GRÁTIS →',
+   trust:'Leva menos de 2 minutos · 100% gratuito'},
+
   {id:'idade', type:'agecover',
-   q:'Reconexão Materna pós-parto:',
-   sub:'Você vai montar um <b>plano de 10 minutos por dia</b> pra reconectar a barriga que a gestação deixou.',
+   q:'Pra começar, qual a sua idade?',
    hint:'(Selecione sua idade abaixo pra começar a gerar o seu plano)',
    opts:[{t:'18–29 anos', img:'assets/idade-18-29.jpg'},
          {t:'30–39 anos', img:'assets/idade-30-39.jpg'},
@@ -385,6 +413,7 @@ const QUIZ_LAST = _qn;                 // nº da última pergunta (= quiz conclu
 let _rmT0 = Date.now();                // cronômetro por tela (ms de resposta)
 function trackView(i){
   const s = S[i]; if(!window.rmTrack) return;
+  if(s.type==='intro'){ rmTrack.view(0); return; }
   if(s.type==='diagnosis') return rmTrack.view('diagnostico');
   if(s.type==='transition') return rmTrack.view('transition');
   if(!isQType(s)) return;
@@ -421,7 +450,7 @@ function render(){
   setProgress();
   const box = document.createElement('div');
   box.className = 'screen';
-  ({cover:rCover,agecover:rAgeCover,single:rSingle,cards:rCards,multi:rMulti,loading:rLoading,proof:rProof,diagnosis:rDiag,transition:rTrans})[s.type](s, box);
+  ({intro:rIntro,cover:rCover,agecover:rAgeCover,single:rSingle,cards:rCards,multi:rMulti,loading:rLoading,proof:rProof,diagnosis:rDiag,transition:rTrans})[s.type](s, box);
   root.innerHTML=''; root.appendChild(box);
   _rmT0 = Date.now(); trackView(idx);
 }
@@ -445,6 +474,25 @@ function rCover(s, box){
   box.appendChild(g);
   const info=document.createElement('div'); info.className='infobox'; info.textContent=s.info; box.appendChild(info);
   const tm=document.createElement('div'); tm.className='tempo'; tm.innerHTML='✅ TEMPO ESTIMADO: <b>'+s.tempo+'</b> · Sua leitura é gratuita'; box.appendChild(tm);
+}
+
+/* ---- intro (landing de entrada) ---- */
+function rIntro(s, box){
+  if(s.brand){const eb=document.createElement('div');eb.className='center';
+    eb.innerHTML='<span class="brandeyebrow">'+s.brand+'</span>';box.appendChild(eb);}
+  const h=document.createElement('h2'); h.className='q introhead'; h.textContent=s.q; box.appendChild(h);
+  if(s.sub){const p=document.createElement('p');p.className='subhead';p.innerHTML=s.sub;box.appendChild(p);}
+  const hero=document.createElement('div'); hero.className='introhero';
+  const phLbl='<div class="phlbl">'+bodySVG+'<small>foto da expert aqui</small></div>';
+  if(s.img){
+    const im=document.createElement('img'); im.src=s.img; im.alt='';
+    im.onerror=()=>{ hero.classList.add('ph'); hero.innerHTML=phLbl; };
+    hero.appendChild(im);
+  }else{ hero.classList.add('ph'); hero.innerHTML=phLbl; }
+  box.appendChild(hero);
+  if(s.notif){const n=document.createElement('div');n.className='notif';n.textContent=s.notif;box.appendChild(n);}
+  const b=document.createElement('button'); b.className='cta'; b.textContent=s.cta||'COMEÇAR →'; b.onclick=next; box.appendChild(b);
+  if(s.trust){const t=document.createElement('div');t.className='trust';t.textContent=s.trust;box.appendChild(t);}
 }
 
 /* ---- agecover (P1 estilo "selecione sua idade") ---- */
@@ -649,9 +697,9 @@ function rTrans(s, box){
   box.innerHTML=
     '<div class="tr-badgewrap"><span class="tr-badge">✨ A sua solução</span></div>'
     +'<img class="tr-img" src="assets/autora-guia.jpg" alt="">'
-    +'<div class="tr-cap">Com <b>Sophia</b> — criadora do Método Reconexão Materna</div>'
+    +'<div class="tr-cap">Com <b>Sophia</b> — criadora do Método Barriga Que Some</div>'
     +'<div class="tr-lead">Não é força de vontade que falta. É reconexão — na ordem certa.</div>'
-    +'<div class="tr-body">Reunimos tudo isso no <b>Método Reconexão Materna: as 3 Camadas</b> — respiração, core profundo e postura, em casa, do jeito <b>seguro pra quem teve filho</b>.</div>'
+    +'<div class="tr-body">Reunimos tudo isso no <b>Método Barriga Que Some: as 3 Camadas</b> — respiração, core profundo e postura, em casa, do jeito <b>seguro pra quem teve filho</b>.</div>'
 
     +'<div class="dx-card"><div class="h"><span class="ic">🌸</span>Como funciona a sua reconexão</div>'
       +'<div class="tf-list">'
